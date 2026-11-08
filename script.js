@@ -19,6 +19,8 @@
   let voices = [];
   let history = [];
   let silenceTimer = null;
+  let pendingTranscript = "";
+  let lastProcessedTranscript = "";
 
   const MAX_HISTORY_MESSAGES = 12;
 
@@ -114,13 +116,15 @@
       }
 
       const heard = (finalText || interim).trim();
-      if (!heard) return;
+      if (!heard || busy) return;
 
-      // While Lisa is speaking, ignore likely self-transcription to reduce echo loops.
+      // Ignore likely recognition of Lisa's own voice to reduce speaker echo.
       if (speaking) {
         const normalizedHeard = normalize(heard);
         const normalizedLisa = normalize(lastAssistantText);
-        if (normalizedLisa && (normalizedLisa.includes(normalizedHeard) || normalizedHeard.includes(normalizedLisa.slice(0, 24)))) {
+        if (normalizedLisa && normalizedHeard.length > 5 &&
+            (normalizedLisa.includes(normalizedHeard) ||
+             normalizedHeard.includes(normalizedLisa.slice(0, Math.min(24, normalizedLisa.length))))) {
           return;
         }
         if (heard.length >= 3) {
@@ -130,10 +134,19 @@
         }
       }
 
-      if (finalText.trim() && !busy) {
-        clearTimeout(silenceTimer);
-        processUserSpeech(finalText.trim());
-      }
+      pendingTranscript = heard;
+      clearTimeout(silenceTimer);
+      // Interim speech is sent after a brief pause; final results are sent sooner.
+      const waitMs = finalText.trim() ? 180 : 650;
+      silenceTimer = setTimeout(() => {
+        const textToSend = pendingTranscript.trim();
+        pendingTranscript = "";
+        if (!sessionOn || busy || !textToSend) return;
+        const normalized = normalize(textToSend);
+        if (normalized && normalized === lastProcessedTranscript) return;
+        lastProcessedTranscript = normalized;
+        processUserSpeech(textToSend);
+      }, waitMs);
     };
 
     rec.onerror = (event) => {
@@ -258,6 +271,8 @@
     }
     sessionOn = true;
     history = [];
+    pendingTranscript = "";
+    lastProcessedTranscript = "";
     setStatus("speaking", "CONNECTING", "Lisa is getting ready to listen");
     // Ask for microphone permission before greeting, so permission errors are clear.
     try {
@@ -284,6 +299,8 @@
     stopListening();
     if (synth) synth.cancel();
     history = [];
+    pendingTranscript = "";
+    lastProcessedTranscript = "";
     setStatus("idle", "Lisa is resting", "जब भी बात करनी हो, button दबाएँ");
     button.classList.remove("active");
     buttonLabel.textContent = "TAP TO SPEAK";

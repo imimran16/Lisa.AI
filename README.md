@@ -7,7 +7,7 @@ Vanilla HTML, CSS and JavaScript frontend with a Vercel Node.js serverless endpo
 1. Add all files to the root of your GitHub repository. Keep `api/chat.js` inside the `api` folder.
 2. In Vercel, open your project → Settings → Environment Variables.
 3. Add `GEMINI_API_KEY` with your Google AI Studio API key. Do not add the key to `script.js` or any browser-side file.
-4. Optional: add `GEMINI_MODEL` with `gemini-3.8-flash`.
+4. Optional: add `GEMINI_MODEL` with `gemini-3.5-flash-lite`.
 5. Save and redeploy the project.
 
 ## Local development
