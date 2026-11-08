@@ -27,7 +27,6 @@ import { GoogleGenAI, Modality } from "https://esm.sh/@google/genai";
       micToggle.setAttribute("aria-pressed",String(muted));
       micToggle.setAttribute("aria-label",muted?"Turn microphone on":"Turn microphone off");
       micToggleLabel.textContent=muted?"MIC OFF":"MIC ON";
-      micToggleIcon.textContent=muted?"🔇":"🎙";
     }
   }
   function b64(bytes){let s="";for(let i=0;i<bytes.length;i+=32768)s+=String.fromCharCode(...bytes.subarray(i,i+32768));return btoa(s);}

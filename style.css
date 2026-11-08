@@ -78,3 +78,15 @@ body[data-state=speaking] .wave i,body[data-state=listening] .wave i{animation:w
 .story blockquote{margin:16px 0 0;padding:14px 18px;border-left:4px solid var(--pur);background:#fff8;border-radius:0 18px 18px 0;line-height:1.6;font-style:italic}
 .story cite{display:block;margin-top:10px;font-style:normal;font-weight:700}
 @media(max-width:600px){#creator{align-items:center}.story{text-align:left}}
+
+.ic{width:1.25em;height:1.25em;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic.fill{fill:currentColor;stroke:none}
+.side nav a{display:flex;align-items:center;gap:12px}.side nav a .ic{width:22px;height:22px}
+.chips span{display:inline-flex;align-items:center;gap:8px}.chips .ic{color:var(--pur)}
+.heart{display:inline-flex;vertical-align:middle}.heart .ic{width:34px;height:34px}.heart.big .ic{width:.75em;height:.75em;color:#a46bff}
+.hs{width:.9em;height:.9em;color:#a46bff;vertical-align:-.1em}
+.bell{color:var(--deep)}.bell .ic{width:22px;height:22px}
+.mic-c .ic{width:26px;height:26px}.talk{display:flex;align-items:center;justify-content:center;gap:10px}.talk .ic{width:24px;height:24px}
+.plus .ic,.send .ic{width:22px;height:22px;margin:auto;display:block}.plus{color:var(--deep)}
+.qa-g .ic{width:28px;height:28px}.qa-g button .ic.fill{color:var(--pur)}
+.mic-t #micToggleIcon{display:inline-flex}.mic-t .ic{width:18px;height:18px}.slash{display:none}.mic-t[aria-pressed=true] .slash{display:block;stroke:#c0267a}.mic-t[aria-pressed=true]{color:#c0267a}

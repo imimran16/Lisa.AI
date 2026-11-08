@@ -11,17 +11,18 @@
 <link rel="stylesheet" href="/style.css" />
 </head>
 <body data-state="idle">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></symbol><symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></symbol><symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol><symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></symbol><symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol><symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 1 1 12 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol><symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 17v4M17 19h4"/></symbol><symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z"/></symbol><symbol id="i-book" viewBox="0 0 24 24"><path d="M3 5.5C5 4 8.5 4 12 6c3.5-2 7-2 9-.5V19c-2-1.5-5.5-1.5-9 .5-3.5-2-7-2-9-.5z"/><path d="M12 6v13.5"/></symbol><symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 3 10.5l7 3 3 7z"/><path d="m21 3-11 10.5"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-8-4.7-8-10.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.5C20 15.3 12 20 12 20z"/></symbol></svg>
 <div class="app">
   <aside class="side">
-    <div class="logo"><span class="heart">♥</span><div><b>AI FRIEND</b><small>Your AI Companion</small></div></div>
+    <div class="logo"><span class="heart"><svg class="ic fill"><use href="#i-heart"/></svg></span><div><b>AI FRIEND</b><small>Your AI Companion</small></div></div>
     <nav>
-      <a class="on" href="#home">⌂ Home</a>
-      <a href="#chat">💬 Chat</a>
-      <a href="#voice">🎙 Voice</a>
-      <a href="#memories">◈ Memories</a>
-      <a href="#settings">⚙ Settings</a>
-      <a href="#creator">👤 CreatorJourney</a>
-      <a href="#privacy">🔒 Privacy Policy</a>
+      <a class="on" href="#home"><svg class="ic "><use href="#i-home"/></svg> Home</a>
+      <a href="#chat"><svg class="ic "><use href="#i-chat"/></svg> Chat</a>
+      <a href="#voice"><svg class="ic "><use href="#i-mic"/></svg> Voice</a>
+      <a href="#memories"><svg class="ic "><use href="#i-layers"/></svg> Memories</a>
+      <a href="#settings"><svg class="ic "><use href="#i-sliders"/></svg> Settings</a>
+      <a href="#creator"><svg class="ic "><use href="#i-user"/></svg> CreatorJourney</a>
+      <a href="#privacy"><svg class="ic "><use href="#i-lock"/></svg> Privacy Policy</a>
     </nav>
     <div class="skyline" aria-hidden="true"></div>
   </aside>
@@ -30,47 +31,47 @@
       <nav class="tabs"><a class="on" href="#">Home</a><a href="#creator">CreatorJourney</a><a href="#privacy">Privacy</a></nav>
       <div class="top-r">
         <span class="pill"><i class="dot"></i>Online</span>
-        <span class="bell">🔔</span>
+        <span class="bell"><svg class="ic "><use href="#i-bell"/></svg></span>
         
       </div>
     </header>
     <section class="hero">
       <div class="portrait" aria-hidden="true"><img src="/lisa.jpg" alt="Lisa" /></div>
       <div class="hero-t">
-        <h1>Your AI Friend <span class="heart big">♥</span></h1>
+        <h1>Your AI Friend <span class="heart big"><svg class="ic fill"><use href="#i-heart"/></svg></span></h1>
         <p>A little company, anytime.</p>
-        <div class="chips"><span>♥ Chat</span><span>🎙 Voice Talk</span><span>✨ Emotional Support</span><span>💬 Always With You</span></div>
+        <div class="chips"><span><svg class="ic fill"><use href="#i-heart"/></svg> Chat</span><span><svg class="ic "><use href="#i-mic"/></svg> Voice Talk</span><span><svg class="ic "><use href="#i-sparkles"/></svg> Emotional Support</span><span><svg class="ic "><use href="#i-chat"/></svg> Always With You</span></div>
       </div>
     </section>
     <section class="cards">
       <div class="card chat" id="chat">
         <div class="chat-h">
           <img class="av" src="/lisa.jpg" alt="Lisa" />
-          <div><b>Lisa ♥</b><small>Your AI Friend</small></div>
+          <div><b>Lisa <svg class="ic fill hs"><use href="#i-heart"/></svg></b><small>Your AI Friend</small></div>
           <span class="on-l"><i class="dot"></i>Online</span>
         </div>
         <div class="msgs" id="msgs"><div class="m bot">Hey 😊<br>I'm Lisa, I'm here! How are you today?</div></div>
         <form class="composer" id="form">
-          <button type="button" class="plus">+</button>
+          <button type="button" class="plus"><svg class="ic "><use href="#i-plus"/></svg></button>
           <input id="input" placeholder="Type a message..." autocomplete="off" />
-          <button class="send" aria-label="Send">➤</button>
+          <button class="send" aria-label="Send"><svg class="ic "><use href="#i-send"/></svg></button>
         </form>
       </div>
       <div class="right">
         <div class="card voice" id="voice">
-          <div class="v-h"><i class="mic-c">🎙</i><div><b>Voice Talk</b><small>Talk with your AI Friend in a natural voice.</small></div></div>
+          <div class="v-h"><i class="mic-c"><svg class="ic "><use href="#i-mic"/></svg></i><div><b>Voice Talk</b><small>Talk with your AI Friend in a natural voice.</small></div></div>
           <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
           <p class="status"><span id="statusLine">Ready when you are</span> <small id="statusDetail"></small></p>
-          <button class="talk" id="voiceButton" type="button"><span id="micIcon">🎙</span> <span id="buttonLabel">Start Talking</span></button>
-          <button class="mic-t" id="micToggle" type="button" hidden aria-pressed="false"><span id="micToggleIcon">🎙</span> <span id="micToggleLabel">MIC ON</span></button>
+          <button class="talk" id="voiceButton" type="button"><span id="micIcon"><svg class="ic "><use href="#i-mic"/></svg></span> <span id="buttonLabel">Start Talking</span></button>
+          <button class="mic-t" id="micToggle" type="button" hidden aria-pressed="false"><span id="micToggleIcon"><svg class="ic"><use href="#i-mic"/><path class="slash" d="M3 3l18 18"/></svg></span> <span id="micToggleLabel">MIC ON</span></button>
         </div>
         <div class="card qa">
           <b>Quick Actions</b>
           <div class="qa-g">
-            <button data-q="Mujhe thoda mood theek karna hai, baat karo">♥<span>Mood Chat</span></button>
-            <button data-q="Mujhe relax karne me help karo">☾<span>Relax Talk</span></button>
-            <button data-q="Mujhe ek chhoti si kahani sunao">📖<span>Story</span></button>
-            <button data-q="Tum aur kya kar sakti ho?">✨<span>More</span></button>
+            <button data-q="Mujhe thoda mood theek karna hai, baat karo"><svg class="ic "><use href="#i-heart"/></svg><span>Mood Chat</span></button>
+            <button data-q="Mujhe relax karne me help karo"><svg class="ic "><use href="#i-moon"/></svg><span>Relax Talk</span></button>
+            <button data-q="Mujhe ek chhoti si kahani sunao"><svg class="ic "><use href="#i-book"/></svg><span>Story</span></button>
+            <button data-q="Tum aur kya kar sakti ho?"><svg class="ic "><use href="#i-sparkles"/></svg><span>More</span></button>
           </div>
         </div>
       </div>
