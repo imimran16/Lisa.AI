@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/public/lisa.html"
+      "destination": "/lisa.html"
     }
   ]
 }
