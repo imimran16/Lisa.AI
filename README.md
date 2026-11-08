@@ -1,4 +1,4 @@
-# Lisa AI — Vercel + Gemini
+
 
 ## Deploy
 1. Upload all files/folders in this project to your GitHub repository `imimran16/Lisa.AI`.
