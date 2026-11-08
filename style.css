@@ -1,0 +1,95 @@
+ :root {
+  color-scheme: dark;
+  --gold: #edcf91;
+  --gold-soft: #d8b979;
+  --purple-panel: #10091a;
+  --purple-button: #281632;
+  --muted: #c7b6d5;
+}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; margin: 0; }
+body {
+  min-height: 100vh; background:#030205; color:#f8f1ff;
+  font-family:"DM Sans",sans-serif; display:grid; place-items:center;
+  padding:12px;
+}
+.app-shell {
+  width:min(100%, 900px); min-height:min(94vh, 1050px);
+  background:
+    radial-gradient(ellipse at 50% 44%,rgba(85,39,119,.13),transparent 45%),
+    #100919;
+  border:1px solid rgba(218,183,126,.08);
+  border-radius:38px; padding:38px 34px 28px;
+  display:flex; flex-direction:column; overflow:hidden;
+  box-shadow:0 24px 90px rgba(0,0,0,.5),inset 0 1px rgba(255,255,255,.025);
+}
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.brand { color:var(--gold); text-decoration:none; font-size:clamp(25px,5vw,42px); font-weight:700; letter-spacing:1.2px; }
+.concept-pill,.connection-pill {
+  display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  background:rgba(0,119,73,.20); color:#12c66c; border-radius:999px;
+  padding:10px 18px; font-size:clamp(11px,2.3vw,17px); font-weight:600;
+  white-space:nowrap;
+}
+.hero { flex:1; display:flex; flex-direction:column; align-items:center; text-align:center; justify-content:center; padding:30px 0 0; }
+.tagline { color:#d5c6df; font-size:clamp(13px,2.6vw,20px); letter-spacing:.2px; margin:8px 0 28px; }
+.orb-card {
+  width:min(66vw,570px); aspect-ratio:1.12 / 1; max-height:520px;
+  background:#020105; border-radius:38px; display:grid; place-items:center;
+  position:relative; overflow:hidden; box-shadow:0 18px 45px rgba(0,0,0,.25);
+}
+.energy-orb { width:84%; height:84%; overflow:visible; animation:orbDrift 7s ease-in-out infinite; }
+.orb-caption { position:absolute; bottom:22px; left:26px; color:#d8c8e6; opacity:.5; font-size:10px; letter-spacing:3px; }
+.orb-caption span { color:var(--gold); }
+h1 { font-family:"Playfair Display",serif; color:var(--gold); font-size:clamp(36px,6.2vw,58px); font-weight:600; margin:24px 0 7px; letter-spacing:-1px; }
+.subtitle { color:#d0c1db; font-size:clamp(16px,3.1vw,25px); margin:0 0 23px; }
+.connection-pill { padding:9px 17px; font-size:clamp(12px,2.4vw,17px); }
+.status-dot { width:8px; height:8px; border-radius:50%; background:#15d77a; box-shadow:0 0 10px #15d77a; }
+.status-detail { color:#bbaac8; font-size:12px; margin:8px 0 24px; min-height:16px; }
+.voice-button {
+  width:min(100%,760px); min-height:168px; border:1px solid rgba(232,201,141,.12);
+  border-radius:999px; background:var(--purple-button); color:var(--gold);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:13px; cursor:pointer; box-shadow:inset 0 1px rgba(255,255,255,.035),0 14px 40px rgba(0,0,0,.18);
+  transition:background .25s,box-shadow .25s,transform .25s;
+}
+.voice-button:hover { background:#34203f; box-shadow:0 0 40px rgba(168,111,229,.2); transform:translateY(-2px); }
+.voice-button:focus-visible { outline:2px solid var(--gold); outline-offset:5px; }
+.mic-icon { width:43px; height:43px; display:block; }
+.mic-icon svg { width:100%; height:100%; }
+.button-label { font-size:clamp(20px,4.5vw,34px); font-weight:700; letter-spacing:1.3px; }
+.privacy-note { color:#b9a8c7; font-size:clamp(13px,2.5vw,19px); margin:28px 0 0; }
+.voice-button.active { background:#382044; box-shadow:0 0 0 5px rgba(205,164,255,.06),0 0 48px rgba(157,90,217,.3); }
+.voice-button.active .mic-icon { animation:micPulse .9s ease-in-out infinite; }
+.voice-button:disabled { opacity:.8; cursor:wait; }
+body[data-state="listening"] .energy-orb { animation:orbListen 2s ease-in-out infinite; }
+body[data-state="thinking"] .energy-orb { animation:orbThink 1.2s ease-in-out infinite; }
+body[data-state="speaking"] .energy-orb { animation:orbSpeak 1s ease-in-out infinite; }
+body[data-state="error"] .status-dot { background:#ff6868; box-shadow:0 0 10px #ff6868; }
+body[data-state="listening"] .status-dot { background:#d5b4ff; box-shadow:0 0 10px #bb83ff; }
+body[data-state="thinking"] .status-dot { background:#e9c783; box-shadow:0 0 10px #e9c783; }
+@keyframes orbDrift { 0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-9px) rotate(2deg)} }
+@keyframes orbListen { 0%,100%{transform:scale(1)}50%{transform:scale(1.045)} }
+@keyframes orbThink { 0%,100%{transform:scale(.98) rotate(-2deg)}50%{transform:scale(1.05) rotate(2deg)} }
+@keyframes orbSpeak { 0%,100%{transform:scale(1)}50%{transform:scale(1.07)} }
+@keyframes micPulse { 0%,100%{transform:scale(1)}50%{transform:scale(1.12)} }
+@media(max-width:600px) {
+  body { padding:8px; }
+  .app-shell { min-height:calc(100vh - 16px); border-radius:30px; padding:24px 18px 22px; }
+  .hero { padding-top:24px; }
+  .tagline { margin:12px 0 25px; }
+  .orb-card { width:min(72vw,430px); border-radius:30px; }
+  h1 { margin-top:22px; }
+  .voice-button { min-height:150px; }
+  .privacy-note { margin-top:24px; }
+}
+@media(max-height:760px) and (min-width:601px) {
+  .app-shell { min-height:96vh; padding-top:22px; padding-bottom:18px; }
+  .hero { padding-top:12px; }
+  .tagline { margin-bottom:15px; }
+  .orb-card { width:min(45vw,390px); }
+  h1 { margin-top:15px; font-size:42px; }
+  .subtitle { margin-bottom:13px; }
+  .status-detail { margin-bottom:12px; }
+  .voice-button { min-height:125px; }
+}

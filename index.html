@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#090510" />
+  <meta name="description" content="Lisa — your personal voice AI assistant" />
+  <title>Lisa AI — Voice Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Lisa home">LISA AI</a>
+      <span class="concept-pill">PREMIUM CONCEPT</span>
+    </header>
+
+    <section class="hero" aria-label="Lisa voice assistant">
+      <p class="tagline">YOUR PERSONAL AI COMPANION</p>
+
+      <div class="orb-card" aria-hidden="true">
+        <svg class="energy-orb" viewBox="0 0 500 500" role="img" aria-label="Animated glowing AI orb">
+          <defs>
+            <radialGradient id="sphere" cx="36%" cy="27%" r="72%">
+              <stop offset="0" stop-color="#32206d"/>
+              <stop offset=".42" stop-color="#140c35"/>
+              <stop offset="1" stop-color="#03020a"/>
+            </radialGradient>
+            <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1">
+              <stop stop-color="#73d9ff"/><stop offset=".28" stop-color="#795bff"/>
+              <stop offset=".63" stop-color="#ed53ff"/><stop offset="1" stop-color="#6122b7"/>
+            </linearGradient>
+            <linearGradient id="fire" x1="0" y1="0" x2="1" y2=".2">
+              <stop stop-color="#ffcf66"/><stop offset=".35" stop-color="#ff6c4b"/>
+              <stop offset=".68" stop-color="#ed45c8"/><stop offset="1" stop-color="#7c4dff"/>
+            </linearGradient>
+            <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="soft"><feGaussianBlur stdDeviation="2.5"/></filter>
+          </defs>
+          <circle cx="250" cy="250" r="166" fill="url(#sphere)" stroke="#7e43ec" stroke-opacity=".3" stroke-width="2"/>
+          <g fill="none" stroke-linecap="round" filter="url(#glow)">
+            <ellipse cx="250" cy="250" rx="164" ry="165" stroke="url(#violet)" stroke-width="4" opacity=".9" transform="rotate(-18 250 250)"/>
+            <path d="M88 264 C145 104 248 104 322 150 S429 281 384 347 C333 421 214 393 139 330 S103 249 179 225 C250 202 326 244 405 310" stroke="url(#violet)" stroke-width="5" opacity=".85"/>
+            <path d="M92 278 C154 230 201 255 250 284 C311 319 360 332 413 278 C372 226 333 196 279 212 C219 230 161 313 94 281" stroke="url(#fire)" stroke-width="7"/>
+            <path d="M99 291 C175 348 235 360 292 331 C344 305 374 263 405 222" stroke="url(#fire)" stroke-width="3" opacity=".9"/>
+            <path d="M120 210 C175 159 249 136 321 166 C366 185 394 227 408 273" stroke="#b98bff" stroke-width="2" opacity=".8"/>
+            <path d="M105 300 C169 382 272 410 350 355" stroke="#a94bff" stroke-width="2" opacity=".7"/>
+          </g>
+          <g fill="none" stroke="#cba6ff" opacity=".35" filter="url(#soft)">
+            <path d="M91 255 C145 170 183 174 244 213 S342 297 414 267" stroke-width="2"/>
+            <path d="M111 314 C176 243 228 232 283 258 S365 332 396 306" stroke-width="2"/>
+          </g>
+        </svg>
+        <div class="orb-caption">LISA <span>•</span> AI CORE</div>
+      </div>
+
+      <h1>Hello, I'm Lisa</h1>
+      <p class="subtitle">Your intelligent voice assistant</p>
+
+      <div class="connection-pill" id="statusPill" aria-live="polite">
+        <span class="status-dot"></span>
+        <span id="statusLine">READY TO CONNECT</span>
+      </div>
+      <p class="status-detail" id="statusDetail">Hindi · Hinglish · English</p>
+
+      <button class="voice-button" id="voiceButton" type="button" aria-label="Start Lisa voice assistant">
+        <span class="mic-icon" id="micIcon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="9" y="2.5" width="6" height="12" rx="3" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M9 21.5h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="button-label" id="buttonLabel">TAP TO SPEAK</span>
+      </button>
+
+      <p class="privacy-note">Hindi · Hinglish · English</p>
+    </section>
+  </main>
+  <script src="/script.js" defer></script>
+</body>
+</html>
