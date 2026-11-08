@@ -5,12 +5,16 @@
   const buttonLabel = document.getElementById("buttonLabel");
   const statusLine = document.getElementById("statusLine");
   const statusDetail = document.getElementById("statusDetail");
+  const micToggle = document.getElementById("micToggle");
+  const micToggleLabel = document.getElementById("micToggleLabel");
+  const micToggleIcon = document.getElementById("micToggleIcon");
 
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const synth = window.speechSynthesis;
 
   let recognition = null;
   let sessionOn = false;
+  let micMuted = false;
   let listening = false;
   let speaking = false;
   let busy = false;
@@ -31,6 +35,13 @@
     button.classList.toggle("active", sessionOn);
     buttonLabel.textContent = sessionOn ? "TAP TO STOP" : "TAP TO SPEAK";
     button.setAttribute("aria-label", sessionOn ? "Stop Lisa assistant" : "Start Lisa assistant");
+    if (micToggle) {
+      micToggle.hidden = !sessionOn;
+      micToggle.setAttribute("aria-pressed", String(micMuted));
+      micToggle.setAttribute("aria-label", micMuted ? "Turn microphone on" : "Turn microphone off");
+      micToggleLabel.textContent = micMuted ? "MIC OFF" : "MIC ON";
+      micToggleIcon.textContent = micMuted ? "🔇" : "🎙";
+    }
   }
 
   function showError(message) {
@@ -48,8 +59,11 @@
   function chooseHindiVoice() {
     loadVoices();
     const hindi = voices.filter(v => /^hi(-|_)?/i.test(v.lang));
-    const femaleHint = /(female|woman|heera|kalpana|aarti|priya|swara)/i;
-    return hindi.find(v => femaleHint.test(v.name)) ||
+    const femaleNames = /(female|woman|heera|kalpana|aarti|priya|swara|aditi|kavya|isha|neerja)/i;
+    const qualityHints = /(google|microsoft|neural|natural|online)/i;
+    return hindi.find(v => femaleNames.test(v.name) && qualityHints.test(v.name)) ||
+      hindi.find(v => femaleNames.test(v.name)) ||
+      hindi.find(v => qualityHints.test(v.name)) ||
       hindi.find(v => /india/i.test(v.lang)) ||
       voices.find(v => /^en-IN/i.test(v.lang)) ||
       voices.find(v => /^en/i.test(v.lang)) || null;
@@ -69,8 +83,8 @@
     } else {
       utterance.lang = "hi-IN";
     }
-    utterance.rate = 0.96;
-    utterance.pitch = 1.12;
+    utterance.rate = 0.91;
+    utterance.pitch = 1.18;
     utterance.volume = 1;
     speaking = true;
     setStatus("speaking", "Lisa is speaking…", "आपकी Lisa जवाब दे रही है");
@@ -141,7 +155,7 @@
       silenceTimer = setTimeout(() => {
         const textToSend = pendingTranscript.trim();
         pendingTranscript = "";
-        if (!sessionOn || busy || !textToSend) return;
+        if (!sessionOn || micMuted || busy || !textToSend) return;
         const normalized = normalize(textToSend);
         if (normalized && normalized === lastProcessedTranscript) return;
         lastProcessedTranscript = normalized;
@@ -169,10 +183,10 @@
 
     rec.onend = () => {
       listening = false;
-      if (sessionOn && !busy && !restarting) {
+      if (sessionOn && !micMuted && !busy && !restarting) {
         restarting = true;
         setTimeout(() => {
-          if (sessionOn && !busy) startListening();
+          if (sessionOn && !micMuted && !busy) startListening();
         }, 350);
       }
     };
@@ -184,7 +198,7 @@
   }
 
   function startListening() {
-    if (!sessionOn || busy || listening) return;
+    if (!sessionOn || micMuted || busy || listening) return;
     if (!recognition) recognition = createRecognition();
     if (!recognition) {
       sessionOn = false;
@@ -209,7 +223,7 @@
   }
 
   async function processUserSpeech(text) {
-    if (!sessionOn || busy || !text) return;
+    if (!sessionOn || micMuted || busy || !text) return;
     busy = true;
     stopListening();
     if (speaking) {
@@ -270,6 +284,7 @@
       return;
     }
     sessionOn = true;
+    micMuted = false;
     history = [];
     pendingTranscript = "";
     lastProcessedTranscript = "";
@@ -293,6 +308,7 @@
 
   function stopSession() {
     sessionOn = false;
+    micMuted = false;
     busy = false;
     speaking = false;
     clearTimeout(silenceTimer);
@@ -304,6 +320,22 @@
     setStatus("idle", "Lisa is resting", "जब भी बात करनी हो, button दबाएँ");
     button.classList.remove("active");
     buttonLabel.textContent = "TAP TO SPEAK";
+  }
+
+  if (micToggle) {
+    micToggle.addEventListener("click", () => {
+      if (!sessionOn) return;
+      micMuted = !micMuted;
+      if (micMuted) {
+        clearTimeout(silenceTimer);
+        pendingTranscript = "";
+        stopListening();
+        setStatus("idle", "MICROPHONE OFF", "Lisa बोलना जारी रखेगी; mic बंद है");
+      } else {
+        setStatus("listening", "I'M LISTENING", "बोलिए, मैं सुन रही हूँ");
+        startListening();
+      }
+    });
   }
 
   button.addEventListener("click", () => {

@@ -93,3 +93,15 @@ body[data-state="thinking"] .status-dot { background:#e9c783; box-shadow:0 0 10p
   .status-detail { margin-bottom:12px; }
   .voice-button { min-height:125px; }
 }
+
+.mic-toggle {
+  margin-top: 15px; display:inline-flex; align-items:center; justify-content:center;
+  gap:8px; border:1px solid rgba(237,207,145,.28); border-radius:999px;
+  padding:9px 17px; background:rgba(255,255,255,.035); color:#d9c6a0;
+  font:600 11px "DM Sans",sans-serif; letter-spacing:1.1px; cursor:pointer;
+  transition:all .2s ease;
+}
+.mic-toggle:hover { background:rgba(237,207,145,.1); }
+.mic-toggle[aria-pressed="true"] { color:#ff9b9b; border-color:rgba(255,120,120,.4); background:rgba(140,35,45,.14); }
+.mic-toggle-icon { font-size:15px; line-height:1; }
+.mic-toggle:focus-visible { outline:2px solid var(--gold); outline-offset:4px; }
