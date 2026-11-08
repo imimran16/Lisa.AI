@@ -2,7 +2,7 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
 <meta name="theme-color" content="#3b1f6e" />
 <title>Lisa — AI Friend — Your AI Companion</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,8 +12,10 @@
 </head>
 <body data-state="idle">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></symbol><symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></symbol><symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol><symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></symbol><symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol><symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 1 1 12 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol><symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 17v4M17 19h4"/></symbol><symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z"/></symbol><symbol id="i-book" viewBox="0 0 24 24"><path d="M3 5.5C5 4 8.5 4 12 6c3.5-2 7-2 9-.5V19c-2-1.5-5.5-1.5-9 .5-3.5-2-7-2-9-.5z"/><path d="M12 6v13.5"/></symbol><symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 3 10.5l7 3 3 7z"/><path d="m21 3-11 10.5"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-8-4.7-8-10.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.5C20 15.3 12 20 12 20z"/></symbol></svg>
+<button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="side"><span></span><span></span><span></span></button>
+<div class="scrim" id="scrim"></div>
 <div class="app">
-  <aside class="side">
+  <aside class="side" id="side">
     <div class="logo"><span class="heart"><svg class="ic fill"><use href="#i-heart"/></svg></span><div><b>AI FRIEND</b><small>Your AI Companion</small></div></div>
     <nav>
       <a class="on" href="#home"><svg class="ic "><use href="#i-home"/></svg> Home</a>
@@ -78,13 +80,14 @@
     </section>
     <section class="card doc priv" id="privacy">
       <h2>Privacy Policy</h2>
-      <p>Aapki privacy hamare liye zaroori hai. Lisa aapki baatein sirf jawab dene ke liye use karti hai.</p>
+      <p>Your privacy matters. Lisa uses what you say only to talk with you.</p>
       <ul>
-        <li>Aapka text Lisa ka jawab banane ke liye hamari AI service ko bheja jata hai.</li>
-        <li>Voice talk me aapka microphone sirf tab chalta hai jab aap Start Talking dabate hain, aur Stop karte hi band ho jata hai.</li>
-        <li>Chat is page par sirf aapke browser me dikhti hai; hum use apne paas save nahi karte.</li>
-        <li>Hum aapka data bechte ya kisi aur ke saath share nahi karte.</li>
-        <li>Lisa ek AI hai, doctor ya therapist nahi. Zarurat par kisi apne ya professional se madad lein.</li>
+        <li>Your text messages are sent to our AI service so that Lisa can write a reply.</li>
+        <li>In Voice Assistant, the microphone is on only while a voice session is running. It stops when you close the voice screen, and you can mute it at any time.</li>
+        <li>This site does not save your conversations. They stay in your browser only while the page is open. Our hosting and AI providers may process requests as needed to deliver the service.</li>
+        <li>We do not sell your personal data or share it with advertisers.</li>
+        <li>Lisa is an AI companion, not a doctor or therapist. If you are in distress or in danger, please contact someone you trust or a local professional or emergency service.</li>
+        <li>Questions about privacy? Contact the creator through the CreatorJourney section.</li>
       </ul>
     </section>
   </main>
@@ -148,6 +151,11 @@
   document.querySelectorAll('a[href="#chat"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); openChat(); }));
   document.querySelectorAll('a[href="#voice"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); openVoice(); }));
   document.addEventListener("keydown", e => { if (e.key === "Escape") { closeChat(); if (!vf.hidden) closeVoice(); } });
+  const burger = $("burger"), setMenu = o => { document.body.classList.toggle("menu-open", o); burger.setAttribute("aria-expanded", o); burger.setAttribute("aria-label", o ? "Close menu" : "Open menu"); };
+  burger.addEventListener("click", () => setMenu(!document.body.classList.contains("menu-open")));
+  $("scrim").addEventListener("click", () => setMenu(false));
+  document.querySelectorAll("#side a").forEach(a => a.addEventListener("click", () => setMenu(false)));
+  document.addEventListener("keydown", e => { if (e.key === "Escape") setMenu(false); });
 })();
 </script>
 </body>
