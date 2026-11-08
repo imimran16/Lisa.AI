@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="theme-color" content="#3b1f6e" />
-<title>AI Friend — Your AI Companion</title>
+<title>Lisa — AI Friend — Your AI Companion</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -20,20 +20,22 @@
       <a href="#voice">🎙 Voice</a>
       <a href="#memories">◈ Memories</a>
       <a href="#settings">⚙ Settings</a>
+      <a href="#creator">👤 CreatorJourney</a>
+      <a href="#privacy">🔒 Privacy Policy</a>
     </nav>
     <div class="skyline" aria-hidden="true"></div>
   </aside>
   <main class="main">
     <header class="top">
-      <nav class="tabs"><a class="on" href="#">Home</a><a href="#">Features</a><a href="#">About</a></nav>
+      <nav class="tabs"><a class="on" href="#">Home</a><a href="#creator">CreatorJourney</a><a href="#privacy">Privacy</a></nav>
       <div class="top-r">
         <span class="pill"><i class="dot"></i>Online</span>
         <span class="bell">🔔</span>
-        <span class="user"><i>I</i>Imran ⌄</span>
+        
       </div>
     </header>
     <section class="hero">
-      <div class="portrait" aria-hidden="true"><img src="/aira.png" alt="" onerror="this.remove()" /></div>
+      <div class="portrait" aria-hidden="true"><img src="/lisa.jpg" alt="Lisa" /></div>
       <div class="hero-t">
         <h1>Your AI Friend <span class="heart big">♥</span></h1>
         <p>A little company, anytime.</p>
@@ -43,11 +45,11 @@
     <section class="cards">
       <div class="card chat" id="chat">
         <div class="chat-h">
-          <i class="av">A</i>
-          <div><b>Aira ♥</b><small>Your AI Friend</small></div>
+          <img class="av" src="/lisa.jpg" alt="Lisa" />
+          <div><b>Lisa ♥</b><small>Your AI Friend</small></div>
           <span class="on-l"><i class="dot"></i>Online</span>
         </div>
-        <div class="msgs" id="msgs"><div class="m bot">Hey Imran 😊<br>I'm here! How are you today?</div></div>
+        <div class="msgs" id="msgs"><div class="m bot">Hey 😊<br>I'm Lisa, I'm here! How are you today?</div></div>
         <form class="composer" id="form">
           <button type="button" class="plus">+</button>
           <input id="input" placeholder="Type a message..." autocomplete="off" />
@@ -72,6 +74,27 @@
           </div>
         </div>
       </div>
+    </section>
+    <section class="card doc" id="creator">
+      <img class="cphoto" src="/creator.jpg" alt="Imran" />
+      <div class="story">
+        <h2>CreatorJourney</h2>
+        <p class="who"><b>Imran</b> · Student · Developer · Lifelong Learner</p>
+        <p>not because success is guaranteed, but because each of these fields gives me another way to understand the world and contribute to it.</p>
+        <p>My dream is to build a technology startup: to create products that solve real problems and earn people’s trust through usefulness, care and hard work. I know a dream alone cannot build a future. It takes discipline when motivation fades, humility when something fails, and the courage to keep improving without comparing every step to someone else’s finish line. I am grateful for how far curiosity has brought me, but I am even more interested in what patient effort can make possible from here.</p>
+        <blockquote>“I started with questions in Class 9. I am still asking questions at eighteen—and now I am learning to turn some of the answers into things I can build. My story is not a claim that I have already made it. It is a promise to keep learning, to work honestly, and to make the next step count.”<cite>— Imran<br>Student · Developer · Lifelong Learner</cite></blockquote>
+      </div>
+    </section>
+    <section class="card doc priv" id="privacy">
+      <h2>Privacy Policy</h2>
+      <p>Aapki privacy hamare liye zaroori hai. Lisa aapki baatein sirf jawab dene ke liye use karti hai.</p>
+      <ul>
+        <li>Aapka text Lisa ka jawab banane ke liye hamari AI service ko bheja jata hai.</li>
+        <li>Voice talk me aapka microphone sirf tab chalta hai jab aap Start Talking dabate hain, aur Stop karte hi band ho jata hai.</li>
+        <li>Chat is page par sirf aapke browser me dikhti hai; hum use apne paas save nahi karte.</li>
+        <li>Hum aapka data bechte ya kisi aur ke saath share nahi karte.</li>
+        <li>Lisa ek AI hai, doctor ya therapist nahi. Zarurat par kisi apne ya professional se madad lein.</li>
+      </ul>
     </section>
   </main>
 </div>

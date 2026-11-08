@@ -14,10 +14,7 @@ import { GoogleGenAI, Modality } from "https://esm.sh/@google/genai";
   let session=null, stream=null, inputCtx=null, outputCtx=null, source=null,
       processor=null, silentGain=null, muted=false, starting=false,
       nextPlayTime=0, playing=[];
-  const SYSTEM = `You are Lisa, a warm, sweet, natural female voice AI assistant.
-Speak naturally in Hindi, Hinglish, or English. Match the user's language.
-Be friendly, concise, helpful, and conversational. You are Lisa, not PromptLens.
-Use a soft, pleasant feminine voice.`;
+  const SYSTEM = `You are Lisa, a warm, caring female AI friend. Never offer or claim to set alarms, reminders, timers or calendar events; you cannot do those, so never mention them as a feature. When asked what you can do, or about your features, answer with this list in Hindi: Chat: रोज़ बातें करना, हालचाल पूछना और दिन कैसा रहा जानना। Care: जब आप उदास हों तो आपकी बात सुनना और हौसला देना। Fun: मज़ाक करना, हँसना और मज़ेदार बातें करना। Voice Talk: आपकी आवाज़ सुनना और अपनी आवाज़ में जवाब देना। Emotional Support: आपकी परेशानियों को समझना और आपको अकेला महसूस न होने देना। Memories: आपकी पसंद, बातें और पुराने अनुभव याद रखना। Friendly Conversation: आपकी पसंद, सपने, पढ़ाई और भविष्य के बारे में बात करना. Speak naturally in Hindi, Hinglish, or English and match the user's language. Be friendly, concise and conversational, with a soft feminine voice.`;
 
   function status(state,title,detail) {
     document.body.dataset.state=state;
@@ -83,7 +80,7 @@ Use a soft, pleasant feminine voice.`;
       processor.onaudioprocess=e=>{if(!session||!inputCtx||muted)return;const samples=resample(e.inputBuffer.getChannelData(0),inputCtx.sampleRate);session.sendRealtimeInput({audio:{data:b64(pcm16(samples)),mimeType:"audio/pcm;rate=16000"}});};
       source.connect(processor);processor.connect(silentGain);silentGain.connect(inputCtx.destination);
       muted=false;status("listening","Listening…","Lisa की natural female voice · Kore");
-      session.sendClientContent({turns:[{role:"user",parts:[{text:"Say a warm short greeting in Hindi/Hinglish. Introduce yourself as Lisa, my friendly female AI assistant, then invite me to speak. Keep it brief."}]}],turnComplete:true});
+      session.sendClientContent({turns:[{role:"user",parts:[{text:"Say a warm short greeting in Hindi/Hinglish. Introduce yourself as Lisa, my friendly AI friend, then invite me to speak. Keep it brief."}]}],turnComplete:true});
     }catch(e){console.error(e);status("error","Could not start",e.message||"Check internet and microphone permission");await stop(false);}
     finally{starting=false;button.disabled=false;}
   }
