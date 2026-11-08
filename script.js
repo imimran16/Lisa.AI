@@ -61,11 +61,14 @@
     const hindi = voices.filter(v => /^hi(-|_)?/i.test(v.lang));
     const femaleNames = /(female|woman|heera|kalpana|aarti|priya|swara|aditi|kavya|isha|neerja)/i;
     const qualityHints = /(google|microsoft|neural|natural|online)/i;
+    // Prefer clearly feminine Hindi voices; browser voice availability varies by device.
     return hindi.find(v => femaleNames.test(v.name) && qualityHints.test(v.name)) ||
       hindi.find(v => femaleNames.test(v.name)) ||
+      voices.find(v => femaleNames.test(v.name) && /^hi/i.test(v.lang)) ||
       hindi.find(v => qualityHints.test(v.name)) ||
       hindi.find(v => /india/i.test(v.lang)) ||
       voices.find(v => /^en-IN/i.test(v.lang)) ||
+      voices.find(v => /^hi/i.test(v.lang)) ||
       voices.find(v => /^en/i.test(v.lang)) || null;
   }
 

@@ -105,3 +105,19 @@ body[data-state="thinking"] .status-dot { background:#e9c783; box-shadow:0 0 10p
 .mic-toggle[aria-pressed="true"] { color:#ff9b9b; border-color:rgba(255,120,120,.4); background:rgba(140,35,45,.14); }
 .mic-toggle-icon { font-size:15px; line-height:1; }
 .mic-toggle:focus-visible { outline:2px solid var(--gold); outline-offset:4px; }
+
+/* Responsive layout refinements */
+.app-shell { width: min(100%, 900px); min-height: min(94vh, 1050px); }
+.hero { width: 100%; }
+.orb-card { width: min(100%, 570px); }
+.voice-button { width: min(100%, 760px); }
+.mic-toggle { min-height: 44px; padding: 10px 20px; font-size: 12px; }
+.mic-toggle[hidden] { display: none !important; }
+@media (max-width: 600px) {
+  .app-shell { width: 100%; min-height: calc(100dvh - 16px); padding-inline: 16px; }
+  .orb-card { width: min(100%, 430px); }
+  .voice-button { min-height: 132px; border-radius: 32px; }
+  .button-label { font-size: clamp(18px, 5vw, 27px); }
+  .mic-toggle { margin-top: 12px; width: auto; min-width: 132px; }
+  .privacy-note { text-align: center; }
+}
