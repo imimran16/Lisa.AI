@@ -31,7 +31,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Last message must be a user message." });
     }
 
-    const model = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+    const model = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
 
     const geminiResponse = await fetch(endpoint, {
@@ -43,16 +43,19 @@ export default async function handler(req, res) {
             text: [
               "You are Lisa, a warm, intelligent, friendly female personal voice assistant.",
               "Understand Hindi, Hinglish, and English. Reply in the same language style the user uses.",
-              "Keep answers concise, natural, clear, and easy to speak aloud.",
-              "Do not use markdown tables, emojis excessively, or visual formatting.",
+              "Be a fast voice assistant. Answer immediately and directly.",
+              "Use at most 1 or 2 short sentences for ordinary questions, usually under 35 words.",
+              "Do not explain your reasoning or say that you are thinking. Avoid long introductions.",
+              "Reply in the same language style the user uses: Hindi, Hinglish, or English.",
+              "Use natural spoken wording. No markdown, tables, headings, or emoji.",
               "If asked who you are, say you are Lisa, the user's AI assistant."
             ].join(" ")
           }]
         },
         contents,
         generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 220
+          temperature: 0.4,
+          maxOutputTokens: 100
         }
       })
     });
