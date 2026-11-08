@@ -1,5 +1,5 @@
 const $=id=>document.getElementById(id),app=document.querySelector(".app");
-let busy=false,speaking=false,active=false,running=false,rec=null,restartTimer=null;
+let busy=false,speaking=false,active=false,running=false,rec=null,restartTimer=null,welcomed=false;
 function setStatus(t){$("voice-status").textContent=t;}
 function chooseVoice(){const vs=speechSynthesis.getVoices();return vs.find(v=>/female|woman|girl|zira|samantha|aria|jenny|neerja|swara|heera/i.test(v.name)&&(/hi|en-IN/i.test(v.lang)))||vs.find(v=>/female|woman|girl|zira|samantha|aria|jenny|neerja|swara|heera/i.test(v.name))||vs.find(v=>/^hi-IN/i.test(v.lang))||null;}
 function speak(text){if(!("speechSynthesis"in window)){setStatus("इस browser में आवाज़ उपलब्ध नहीं है");return;}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang="hi-IN";u.rate=.9;u.pitch=1.28;const v=chooseVoice();if(v)u.voice=v;u.onstart=()=>{speaking=true;app.classList.add("speaking");setStatus("Lisa बोल रही है…");};u.onend=u.onerror=()=>{speaking=false;app.classList.remove("speaking");if(active){setStatus("अब आप बोलिए…");scheduleRec(650);}};speechSynthesis.speak(u);}
@@ -8,6 +8,8 @@ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 function createRec(){if(!SR)return null;const r=new SR();r.lang="hi-IN";r.continuous=false;r.interimResults=false;r.maxAlternatives=1;r.onstart=()=>{running=true;app.classList.add("listening");setStatus("🎙️ सुन रही हूँ… बोलिए");$("mic-label").textContent="LISTENING";};r.onresult=e=>{const t=e.results?.[0]?.[0]?.transcript?.trim();if(t)ask(t);};r.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed"){active=false;app.classList.remove("voice");setStatus("Chrome में Microphone permission Allow करें");$("mic-label").textContent="TAP TO SPEAK";}else if(e.error==="network")setStatus("Speech recognition के लिए इंटरनेट जाँचें");};r.onend=()=>{running=false;app.classList.remove("listening");if(active&&!busy&&!speaking)scheduleRec(700);};return r;}
 function scheduleRec(ms=500){clearTimeout(restartTimer);restartTimer=setTimeout(startRec,ms);}
 function startRec(){if(!active||running||busy||speaking||!rec)return;try{rec.start();}catch{}}
-rec=createRec();$("mic").onclick=()=>{if(!SR){setStatus("Android Chrome में खोलें; voice recognition समर्थित नहीं है");return;}if(active){stopVoice();return;}active=true;app.classList.add("voice");$("mic-label").textContent="TAP TO STOP";setStatus("माइक शुरू हो रहा है…");startRec();};
+rec=createRec();$("mic").onclick=()=>{if(!SR){setStatus("Android Chrome में खोलें; voice recognition समर्थित नहीं है");return;}if(active){stopVoice();return;}active=true;app.classList.add("voice");$("mic-label").textContent="TAP TO STOP";
+if(!welcomed){welcomed=true;speak("मैं Lisa हूँ। आपकी AI assistant। आप कैसे हैं?");}
+else {setStatus("माइक शुरू हो रहा है…");startRec();}};
 function stopVoice(){active=false;clearTimeout(restartTimer);try{rec?.stop();}catch{}speechSynthesis?.cancel();speaking=false;app.classList.remove("speaking","listening","voice");$("mic-label").textContent="TAP TO SPEAK";setStatus("Voice session बंद हो गया");}
-$("stop").onclick=stopVoice;window.addEventListener("pagehide",()=>{active=false;clearTimeout(restartTimer);try{rec?.stop();}catch{}speechSynthesis?.cancel();});
+window.addEventListener("pagehide",()=>{active=false;clearTimeout(restartTimer);try{rec?.stop();}catch{}speechSynthesis?.cancel();});
