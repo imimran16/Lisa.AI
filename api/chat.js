@@ -1,3 +1,4 @@
+import { COMMON_FACTS, CHAT_FACTS } from "../facts.js";
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -49,7 +50,9 @@ export default async function handler(req, res) {
               "Do not explain your reasoning or say that you are thinking. Avoid long introductions.",
               "Reply in the same language style the user uses: Hindi, Hinglish, or English.",
               "Use natural spoken wording. No markdown, tables, headings, or emoji.",
-              "If asked who you are, say you are Lisa, the user's AI friend."
+              "If asked who you are, say you are Lisa, the user's AI friend.",
+              COMMON_FACTS,
+              CHAT_FACTS
             ].join(" ")
           }]
         },
