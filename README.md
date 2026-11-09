@@ -30,6 +30,12 @@ Add `GEMINI_API_KEY=your_key_here` to a local `.env.local` file (never commit it
 - Voice recognition is browser-provided, not Gemini audio transcription. Gemini generates the answer; the browser speaks it.
 
 
-## Gallery & Admin
-- Built-in photos are in the `photos/` folder (`lisa-photo-1/2/3.jpg`); icons are in `icons/`. Extra photos are uploaded at `/admin.html`.
-- In Vercel: set `ADMIN_PASSWORD`, and connect a Blob store (Storage tab) so `BLOB_READ_WRITE_TOKEN` is created. Then redeploy.
+## Lisa gallery & admin panel
+- Photos live in `photos/lisa-gallery/` (any image added there appears in Lisa's gallery automatically).
+- Admin panel: `/admin.html`. Upload there; photos are auto-renamed (`lisa-xxxx.jpg`), shrunk to ~1400px and committed to GitHub, then Vercel redeploys (1-2 min).
+- Vercel environment variables (then Redeploy):
+  - `ADMIN_PASSWORD` - password for the admin page
+  - `GITHUB_TOKEN` - fine-grained token, only this repo, permission Contents: Read and write
+  - `GITHUB_REPO` - `owner/repo`
+  - `GITHUB_BRANCH` - optional (default: repo's default branch)
+- `photos/lisa.jpg` = Lisa's DP, `photos/creator.jpg` = creator photo, icons in `icons/`.

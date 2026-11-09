@@ -132,14 +132,37 @@
 (() => {
   const $ = id => document.getElementById(id);
   const msgs = $("msgs"), input = $("input"), cm = $("chatModal"), vf = $("vfull"), vb = $("voiceButton"), burger = $("burger"), hist = [];
-  const BUILT = ["/photos/lisa-photo-1.jpg", "/photos/lisa-photo-2.jpg", "/photos/lisa-photo-3.jpg"];
+  const BUILT = ["/photos/lisa-gallery/lisa-photo-1.jpg", "/photos/lisa-gallery/lisa-photo-2.jpg", "/photos/lisa-gallery/lisa-photo-3.jpg"];
   let photos = BUILT.slice(), last = null;
-  fetch("/api/photos").then(r => r.ok ? r.json() : null).then(j => { if (j && Array.isArray(j.photos)) photos = [...new Set([...BUILT, ...j.photos])]; }).catch(() => {});
+  const cache = new Map(), MAX_PRELOAD = navigator.connection && navigator.connection.saveData ? 2 : 6;
+  const loaded = u => { const i = cache.get(u); return !!i && i.complete && i.naturalWidth > 0; };
+  function preload(u) {
+    if (cache.has(u)) return;
+    const i = new Image(); i.decoding = "async";
+    i.onerror = () => { cache.delete(u); photos = photos.filter(p => p !== u); };
+    i.src = u; cache.set(u, i);
+  }
+  function topUp() {
+    const rest = photos.filter(p => !cache.has(p));
+    if (rest.length) preload(rest[Math.floor(Math.random() * rest.length)]);
+    while (cache.size > MAX_PRELOAD) cache.delete(cache.keys().next().value);
+  }
+  const startPreload = () => photos.slice().sort(() => Math.random() - .5).slice(0, MAX_PRELOAD).forEach(preload);
+  fetch("/api/gallery").then(r => r.ok ? r.json() : null).then(j => {
+    if (j && Array.isArray(j.photos) && j.photos.length) photos = j.photos;
+  }).catch(() => {}).then(() => {
+    if (document.readyState === "complete") setTimeout(startPreload, 200);
+    else addEventListener("load", () => setTimeout(startPreload, 200));
+  });
   const CAPS = ["Ye lo, meri ek photo 😊", "Lo, ye meri ek photo hai 💜", "Ye lo! Kaisi lagi? 😊"];
   const PHOTO_RE = /(photo|foto|pic\b|pics\b|picture|selfie|tasveer|tasvir|फोटो|फ़ोटो|तस्वीर|तसवीर)/i;
   const ASK_RE = /(bhej|send|show|dikha|dekh|\bde\b|\bdo\b|dena|dedo|chahiye|chahie|maang|mang|share|please|pls|plz|भेज|दिखा|दे|दो|दीजिए|चाहिए|चाहिये|मांग|देखन)/i;
   const pick = a => a[Math.floor(Math.random() * a.length)];
-  const pickPhoto = () => { const pool = photos.filter(p => p !== last); const p = pick(pool.length ? pool : photos); last = p; return p; };
+  const pickPhoto = () => {
+    const ok = photos.filter(p => p !== last), pool = ok.length ? ok : photos;
+    const ready = pool.filter(loaded), p = pick(ready.length ? ready : pool);
+    last = p; setTimeout(topUp, 0); return p;
+  };
   const t = () => new Date().toLocaleTimeString([], {hour: "numeric", minute: "2-digit"});
   function fill(el, text) {
     el.textContent = "";
@@ -155,7 +178,7 @@
     a.href = src; a.target = "_blank"; a.rel = "noopener"; i.src = src; i.alt = "Lisa"; i.className = "pic";
     i.onload = () => { msgs.scrollTop = msgs.scrollHeight; };
     i.onerror = () => {
-      a.remove(); photos = photos.filter(p => p !== src);
+      a.remove(); cache.delete(src); photos = photos.filter(p => p !== src);
       if (photos.length && tries < 3) addImg(d, pickPhoto(), tries + 1);
       else d.querySelector(".txt").textContent = "Sorry, photo abhi load nahi ho paayi.";
     };

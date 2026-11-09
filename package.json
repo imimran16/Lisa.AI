@@ -5,8 +5,5 @@
   "type": "module",
   "scripts": {
     "dev": "vercel dev"
-  },
-  "dependencies": {
-    "@vercel/blob": "^1.0.0"
   }
 }

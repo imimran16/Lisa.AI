@@ -1,3 +1,19 @@
 {
-  "version": 2
+  "version": 2,
+  "functions": {
+    "api/gallery.js": {
+      "includeFiles": "photos/lisa-gallery/**"
+    }
+  },
+  "headers": [
+    {
+      "source": "/photos/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
+    }
+  ]
 }
