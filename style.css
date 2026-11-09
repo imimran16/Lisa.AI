@@ -146,3 +146,7 @@ body[data-state=listening] .orb{box-shadow:0 0 0 10px #ffffff1a}
 .modal{grid-template-columns:minmax(0,1fr)}
 .modal .chat,.msgs,.chat-h>div{min-width:0}
 .modal .chat{max-width:100%}
+
+.cjbtn{display:inline-flex;align-items:center;gap:10px;margin-top:10px;padding:12px 20px;border:0;border-radius:24px;background:linear-gradient(90deg,#6a35d6,#8a5bf2);color:#fff;font:700 16px inherit;font-family:inherit;cursor:pointer;box-shadow:0 6px 16px #7c4dff44}
+.cjbtn .ic{width:20px;height:20px;transition:transform .25s}.cjbtn[aria-expanded=true] .ic{transform:rotate(180deg)}
+#storyBody{margin-top:8px}
