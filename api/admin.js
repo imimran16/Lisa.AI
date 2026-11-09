@@ -1,3 +1,4 @@
+import { blobToken } from "../blobtoken.js";
 import { put, list, del } from "@vercel/blob";
 import { timingSafeEqual } from "node:crypto";
 
@@ -15,12 +16,13 @@ export default async function handler(req, res) {
   const password = process.env.ADMIN_PASSWORD;
   if (!password) return res.status(500).json({ error: "ADMIN_PASSWORD is not set in Vercel." });
   if (!same(req.headers["x-admin-password"], password)) return res.status(401).json({ error: "Wrong password." });
-  if (!process.env.BLOB_READ_WRITE_TOKEN) return res.status(500).json({ error: "Vercel Blob storage is not connected (BLOB_READ_WRITE_TOKEN missing)." });
+  const token = blobToken();
+  if (!token) return res.status(500).json({ error: "Vercel Blob storage is not connected. In Vercel open Storage, create a Blob store, connect it to this project, then Redeploy." });
 
   const body = req.body || {};
   try {
     if (body.action === "list") {
-      const { blobs } = await list({ prefix: "gallery/" });
+      const { blobs } = await list({ prefix: "gallery/", token });
       return res.status(200).json({ photos: blobs.map(b => ({ url: b.url, name: b.pathname })) });
     }
     if (body.action === "upload") {
@@ -29,14 +31,14 @@ export default async function handler(req, res) {
       const buf = Buffer.from(m[2], "base64");
       if (buf.length > 4 * 1024 * 1024) return res.status(413).json({ error: "Image is too large." });
       const ext = m[1] === "image/png" ? "png" : m[1] === "image/webp" ? "webp" : "jpg";
-      const out = await put(`gallery/photo.${ext}`, buf, { access: "public", contentType: m[1], addRandomSuffix: true });
+      const out = await put(`gallery/photo.${ext}`, buf, { access: "public", contentType: m[1], addRandomSuffix: true, token });
       return res.status(200).json({ url: out.url });
     }
     if (body.action === "delete") {
       if (typeof body.url !== "string" || !body.url.startsWith("https://") || !body.url.includes("/gallery/")) {
         return res.status(400).json({ error: "Invalid photo URL." });
       }
-      await del(body.url);
+      await del(body.url, { token });
       return res.status(200).json({ ok: true });
     }
     return res.status(400).json({ error: "Unknown action." });
