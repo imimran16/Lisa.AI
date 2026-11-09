@@ -28,3 +28,8 @@ Add `GEMINI_API_KEY=your_key_here` to a local `.env.local` file (never commit it
 - Speech recognition support and available Hindi voices depend on the browser and operating system. Chrome on Android/desktop is recommended.
 - The browser's built-in speech synthesis chooses an available Hindi/Indian voice; it cannot guarantee that every device has a female Hindi voice.
 - Voice recognition is browser-provided, not Gemini audio transcription. Gemini generates the answer; the browser speaks it.
+
+
+## Gallery & Admin
+- Built-in photos live in `gallery/`. Extra photos are uploaded at `/admin.html`.
+- In Vercel: set `ADMIN_PASSWORD`, and connect a Blob store (Storage tab) so `BLOB_READ_WRITE_TOKEN` is created. Then redeploy.

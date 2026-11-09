@@ -140,3 +140,9 @@ body[data-state=listening] .orb{box-shadow:0 0 0 10px #ffffff1a}
  .chat-h{gap:10px}.on-l{font-size:13px}.av{width:44px;height:44px}
  .pill{padding:6px 12px}.hero-t h1{font-size:34px}.qa-g{gap:8px}
 }
+
+.pic{display:block;width:min(280px,100%);border-radius:14px;margin-top:8px;background:#e6dafb}
+.m a{color:inherit;text-decoration:underline;word-break:break-all}
+.modal{grid-template-columns:minmax(0,1fr)}
+.modal .chat,.msgs,.chat-h>div{min-width:0}
+.modal .chat{max-width:100%}

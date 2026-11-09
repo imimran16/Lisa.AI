@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
 <meta name="theme-color" content="#3b1f6e" />
 <title>Lisa — AI Friend — Your AI Companion</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -73,7 +78,8 @@
       <div class="story">
         <h2>CreatorJourney</h2>
         <p class="who"><b>Imran</b> · Student · Developer · Lifelong Learner</p>
-        <p>not because success is guaranteed, but because each of these fields gives me another way to understand the world and contribute to it.</p>
+        <p>to turn learning into something practical. It helps people examine an image and create a detailed prompt describing its visible subject, composition, lighting, colours and style. It is one project, not the end of the journey. For me, its value is that it represents a change: I am not only using tools made by others; I am learning how to build tools, solve problems and bring my own ideas into the world.</p>
+        <p>Behind every line of code is still a student preparing for Class 12, trying to balance school, study, curiosity and ambition. I do not have every answer at eighteen, and I do not need to pretend that I do. I have skills to strengthen, subjects to master, mistakes to correct and a great deal left to discover. I want to keep learning about software, artificial intelligence, business and finance—not because success is guaranteed, but because each of these fields gives me another way to understand the world and contribute to it.</p>
         <p>My dream is to build a technology startup: to create products that solve real problems and earn people’s trust through usefulness, care and hard work. I know a dream alone cannot build a future. It takes discipline when motivation fades, humility when something fails, and the courage to keep improving without comparing every step to someone else’s finish line. I am grateful for how far curiosity has brought me, but I am even more interested in what patient effort can make possible from here.</p>
         <blockquote>“I started with questions in Class 9. I am still asking questions at eighteen—and now I am learning to turn some of the answers into things I can build. My story is not a claim that I have already made it. It is a promise to keep learning, to work honestly, and to make the next step count.”<cite>— Imran<br>Student · Developer · Lifelong Learner</cite></blockquote>
       </div>
@@ -121,41 +127,68 @@
 <script type="module" src="/script.js"></script>
 <script>
 (() => {
-  const msgs = document.getElementById("msgs"), input = document.getElementById("input"), hist = [];
+  const $ = id => document.getElementById(id);
+  const msgs = $("msgs"), input = $("input"), cm = $("chatModal"), vf = $("vfull"), vb = $("voiceButton"), burger = $("burger"), hist = [];
+  const BUILT = ["/gallery/p1.jpg", "/gallery/p2.jpg", "/gallery/p3.jpg"];
+  let photos = BUILT.slice(), last = null;
+  fetch("/api/photos").then(r => r.ok ? r.json() : null).then(j => { if (j && Array.isArray(j.photos)) photos = [...new Set([...BUILT, ...j.photos])]; }).catch(() => {});
+  const CAPS = ["Ye lo, meri ek photo 😊", "Lo, ye meri ek photo hai 💜", "Ye lo! Kaisi lagi? 😊"];
+  const PHOTO_RE = /(photo|foto|pic\b|pics\b|picture|selfie|tasveer|tasvir|फोटो|फ़ोटो|तस्वीर|तसवीर)/i;
+  const ASK_RE = /(bhej|send|show|dikha|dekh|\bde\b|\bdo\b|dena|dedo|chahiye|chahie|maang|mang|share|please|pls|plz|भेज|दिखा|दे|दो|दीजिए|चाहिए|चाहिये|मांग|देखन)/i;
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const pickPhoto = () => { const pool = photos.filter(p => p !== last); const p = pick(pool.length ? pool : photos); last = p; return p; };
   const t = () => new Date().toLocaleTimeString([], {hour: "numeric", minute: "2-digit"});
-  function add(text, who) {
-    const d = document.createElement("div"); d.className = "m " + who;
-    d.append(text, Object.assign(document.createElement("small"), {textContent: t()}));
+  function fill(el, text) {
+    el.textContent = "";
+    text.split(/(https?:\/\/\S+)/g).forEach(part => {
+      if (/^https?:\/\//.test(part)) {
+        const url = part.replace(/[.,;:!?)]+$/, ""), a = document.createElement("a");
+        a.href = url; a.textContent = url; a.target = "_blank"; a.rel = "noopener"; el.append(a, part.slice(url.length));
+      } else el.append(part);
+    });
+  }
+  function addImg(d, src) {
+    const a = document.createElement("a"), i = new Image();
+    a.href = src; a.target = "_blank"; a.rel = "noopener"; i.src = src; i.alt = "Lisa"; i.className = "pic";
+    i.onload = () => { msgs.scrollTop = msgs.scrollHeight; }; a.append(i); d.insertBefore(a, d.querySelector("small"));
+  }
+  function add(text, who, img) {
+    const d = document.createElement("div"), s = document.createElement("span");
+    d.className = "m " + who; s.className = "txt"; fill(s, text); d.append(s, Object.assign(document.createElement("small"), {textContent: t()}));
+    if (img) addImg(d, img);
     msgs.append(d); msgs.scrollTop = msgs.scrollHeight; return d;
   }
   async function send(text) {
     text = text.trim(); if (!text) return; openChat();
     add(text, "me"); hist.push({role: "user", parts: [{text}]});
+    if (PHOTO_RE.test(text) && ASK_RE.test(text)) {
+      const c = pick(CAPS); add(c, "bot", pickPhoto()); hist.push({role: "model", parts: [{text: c}]}); return;
+    }
     const wait = add("…", "bot");
     try {
-      const r = await fetch("/api/chat", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({contents: hist.slice(-12)})});
+      const r = await fetch("/api/chat", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({contents: hist.slice(-11)})});
       const j = await r.json(); if (!r.ok) throw Error(j.error || "Error");
-      wait.firstChild.textContent = j.reply; hist.push({role: "model", parts: [{text: j.reply}]});
-    } catch (e) { wait.firstChild.textContent = "Sorry, abhi reply nahi aa paaya. " + e.message; hist.pop(); }
+      const wants = /\[\[PHOTO\]\]/.test(j.reply), reply = j.reply.replace(/\s*\[\[PHOTO\]\]\s*/g, " ").trim() || CAPS[0];
+      fill(wait.querySelector(".txt"), reply); hist.push({role: "model", parts: [{text: reply}]});
+      if (wants) addImg(wait, pickPhoto());
+    } catch (e) { fill(wait.querySelector(".txt"), "Sorry, abhi reply nahi aa paaya. " + e.message); hist.pop(); }
   }
-  document.getElementById("form").addEventListener("submit", e => { e.preventDefault(); send(input.value); input.value = ""; });
+  $("form").addEventListener("submit", e => { e.preventDefault(); const v = input.value; input.value = ""; send(v); });
   document.querySelectorAll("[data-q]").forEach(b => b.addEventListener("click", () => send(b.dataset.q)));
-  const $ = id => document.getElementById(id), cm = $("chatModal"), vf = $("vfull"), vb = $("voiceButton");
-  function openChat() { cm.hidden = false; $("input").focus(); }
+  function openChat() { cm.hidden = false; input.focus(); }
   function closeChat() { cm.hidden = true; }
   function openVoice() { vf.hidden = false; document.body.classList.add("noscroll"); if (!vb.classList.contains("active")) vb.click(); }
   function closeVoice() { if (vb.classList.contains("active")) vb.click(); vf.hidden = true; document.body.classList.remove("noscroll"); }
+  const setMenu = o => { document.body.classList.toggle("menu-open", o); burger.setAttribute("aria-expanded", o); burger.setAttribute("aria-label", o ? "Close menu" : "Open menu"); };
   $("openChat").addEventListener("click", openChat); $("closeChat").addEventListener("click", closeChat);
   $("openVoice").addEventListener("click", openVoice); $("closeVoice").addEventListener("click", closeVoice);
   cm.addEventListener("click", e => { if (e.target === cm) closeChat(); });
   document.querySelectorAll('a[href="#chat"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); openChat(); }));
   document.querySelectorAll('a[href="#voice"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); openVoice(); }));
-  document.addEventListener("keydown", e => { if (e.key === "Escape") { closeChat(); if (!vf.hidden) closeVoice(); } });
-  const burger = $("burger"), setMenu = o => { document.body.classList.toggle("menu-open", o); burger.setAttribute("aria-expanded", o); burger.setAttribute("aria-label", o ? "Close menu" : "Open menu"); };
   burger.addEventListener("click", () => setMenu(!document.body.classList.contains("menu-open")));
   $("scrim").addEventListener("click", () => setMenu(false));
   document.querySelectorAll("#side a").forEach(a => a.addEventListener("click", () => setMenu(false)));
-  document.addEventListener("keydown", e => { if (e.key === "Escape") setMenu(false); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") { setMenu(false); closeChat(); if (!vf.hidden) closeVoice(); } });
 })();
 </script>
 </body>
