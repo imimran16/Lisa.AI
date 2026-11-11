@@ -1,36 +1,60 @@
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><meta name="color-scheme" content="light">
 <title>Lisa Admin</title><link rel="icon" href="/icons/favicon.ico">
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:#f1eaff;color:#2a1250;padding:16px}
-.box{max-width:900px;margin:0 auto;background:#fff;border-radius:20px;padding:20px;box-shadow:0 8px 24px #7c4dff22}
-h1{margin:0 0 12px;font-size:24px}input,button{font:inherit}input[type=password]{padding:12px;border:1px solid #d9ccf5;border-radius:12px;width:min(320px,100%)}
-button{padding:11px 18px;border:0;border-radius:12px;background:#6a35d6;color:#fff;font-weight:600;cursor:pointer}button:disabled{opacity:.6}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0}.msg{min-height:22px;font-weight:600}.err{color:#c0267a}.ok{color:#198754}.note{color:#6f6590;font-size:14px}
-input[type=file]{max-width:100%;min-width:0}.row>*{min-width:0}.box{overflow:hidden}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:#f1eaff;color:#2a1250;padding:14px}
+.wrap{max-width:960px;margin:0 auto;display:grid;gap:14px}
+.box{background:#fff;border-radius:20px;padding:18px;box-shadow:0 8px 24px #7c4dff22;min-width:0}
+h1{margin:0;font-size:24px}h2{margin:0 0 10px;font-size:19px}input,button,textarea{font:inherit}
+input[type=password]{padding:12px;border:1px solid #d9ccf5;border-radius:12px;width:min(320px,100%)}
+button{padding:10px 16px;border:0;border-radius:12px;background:#6a35d6;color:#fff;font-weight:600;cursor:pointer}button:disabled{opacity:.6}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}.msg{min-height:20px;font-weight:600;font-size:14px}.err{color:#c0267a}.ok{color:#198754}.note{color:#6f6590;font-size:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}.c{background:#f6f0ff;border-radius:14px;padding:12px}.c b{display:block;font-size:26px}.c span{font-size:13px;color:#6f6590}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 6px}.tabs button{background:#e9defd;color:#5b2fc9;padding:7px 12px;font-size:13px}.tabs button.on{background:#6a35d6;color:#fff}
+.chart{overflow-x:auto}.chart svg{display:block}
+.fb{border-top:1px solid #eee;padding:10px 0}.fb .s{color:#f5b301;letter-spacing:2px}.fb small{color:#6f6590}.fb p{margin:4px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:12px}
 .it{position:relative;border-radius:14px;overflow:hidden;background:#eee;aspect-ratio:3/4;display:grid;place-items:center}.it img{width:100%;height:100%;object-fit:cover;display:block}
 .it b{position:absolute;left:6px;top:6px;background:#000a;color:#fff;font-size:11px;padding:3px 8px;border-radius:10px}
 .it button{position:absolute;right:6px;bottom:6px;padding:6px 12px;background:#c0267a;font-size:13px}.wait{font-size:13px;color:#6f6590;text-align:center;padding:8px}
-</style></head><body><div class="box">
-<h1>Lisa Admin — Gallery</h1>
+input[type=file]{max-width:100%;min-width:0}
+</style></head><body><div class="wrap">
+<div class="box"><h1>Lisa Admin</h1>
 <div id="login"><div class="row"><input id="pw" type="password" placeholder="Admin password" autocomplete="current-password"><button id="go">Login</button></div></div>
-<div id="panel" hidden>
-<p>Upload photos. They are renamed automatically, saved in your GitHub repo, and Lisa sends a random one when someone asks for her photo in chat.</p>
-<div class="row"><input id="files" type="file" accept="image/jpeg,image/png,image/webp" multiple><button id="up">Upload</button></div>
-<div class="msg" id="msg"></div><p class="note">New photos go live after Vercel redeploys (about 1-2 minutes).</p><div class="grid" id="grid"></div></div>
 <div class="msg err" id="lerr"></div></div>
+<div id="panel" hidden class="wrap" style="padding:0">
+ <div class="box"><h2>Visitors &amp; usage</h2><div class="cards" id="cards"></div>
+  <div class="tabs" id="tabs"></div><div class="chart" id="chart"></div><p class="note" id="smsg">Last 14 days (India time). Visitors = unique devices (anonymous).</p></div>
+ <div class="box"><h2>Feedback <span class="note" id="fbavg"></span></h2><div id="fblist"></div><p class="msg err" id="fberr"></p></div>
+ <div class="box"><h2>Gallery</h2><p class="note">Photos are renamed automatically, saved in GitHub, and Lisa sends a random one in chat. Live after Vercel redeploys (1-2 min).</p>
+  <div class="row"><input id="files" type="file" accept="image/jpeg,image/png,image/webp" multiple><button id="up">Upload</button></div>
+  <div class="msg" id="msg"></div><div class="grid" id="grid"></div></div>
+</div></div>
 <script>
-const $=id=>document.getElementById(id);let pw="";const prev={};
+const $=id=>document.getElementById(id);let pw="",stats=null,metric="uv";const prev={};
 async function api(b){const r=await fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json","x-admin-password":pw},body:JSON.stringify(b)});const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.error||("Error "+r.status));return j}
-function say(t,c){const m=$("msg");m.textContent=t;m.className="msg "+(c||"")}
-async function shrink(f){const b=await createImageBitmap(f);const s=Math.min(1,1400/Math.max(b.width,b.height));const c=document.createElement("canvas");c.width=Math.round(b.width*s);c.height=Math.round(b.height*s);c.getContext("2d").drawImage(b,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.85)}
-function tile(p){const d=document.createElement("div");d.className="it";const i=new Image();i.alt="";i.src=prev[p.name]||p.url;
-i.onerror=()=>{i.remove();const w=document.createElement("div");w.className="wait";w.textContent="Deploying… (1-2 min)";d.prepend(w)};
-const b=document.createElement("b");b.textContent=p.name.length>16?p.name.slice(0,14)+"…":p.name;d.append(i,b);
-const x=document.createElement("button");x.textContent="Delete";x.onclick=async()=>{if(!confirm("Delete this photo?"))return;x.disabled=true;try{await api({action:"delete",name:p.name});say("Deleted. The site updates in 1-2 minutes.","ok");await load()}catch(e){say(e.message,"err");x.disabled=false}};d.append(x);return d}
-async function load(){const j=await api({action:"list"});const g=$("grid");g.textContent="";j.photos.forEach(p=>g.append(tile(p)));if(!j.photos.length)g.textContent="No photos yet."}
-$("go").onclick=async()=>{pw=$("pw").value;$("lerr").textContent="";try{await load();$("login").hidden=true;$("panel").hidden=false}catch(e){$("lerr").textContent=e.message}};
+const say=(t,c)=>{const m=$("msg");m.textContent=t;m.className="msg "+(c||"")};
+const M=[["uv","Visitors"],["visit","Visits"],["chat","Chat messages"],["voice","Voice sessions"],["photo","Photos sent"],["fb","Feedback"]];
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+function cards(){const c=$("cards");c.textContent="";const t=stats.totals,d=stats.days[stats.days.length-1];
+ [["Total visitors",t.uv],["Visitors today",d.uv],["Visits today",d.visit],["Chats today",d.chat],["Voice today",d.voice],["Photos today",d.photo],["Feedback",t.fb],["Avg rating",stats.rating.count?stats.rating.avg+" ★":"–"]].forEach(([l,v])=>{const x=el("div","c");x.append(el("b",0,v),el("span",0,l));c.append(x)})}
+function tabs(){const t=$("tabs");t.textContent="";M.forEach(([k,l])=>{const b=el("button",k===metric?"on":"",l);b.onclick=()=>{metric=k;tabs();chart()};t.append(b)})}
+function chart(){const days=stats.days,W=Math.max(340,days.length*46),H=190,P=26,mx=Math.max(1,...days.map(d=>d[metric])),bw=(W-P*2)/days.length,NS="http://www.w3.org/2000/svg";
+ const s=document.createElementNS(NS,"svg");s.setAttribute("viewBox",`0 0 ${W} ${H}`);s.setAttribute("width",W);s.setAttribute("height",H);
+ const T=(x,y,t,a,sz,f)=>{const e=document.createElementNS(NS,"text");e.setAttribute("x",x);e.setAttribute("y",y);e.setAttribute("text-anchor",a);e.setAttribute("font-size",sz);e.setAttribute("fill",f);e.textContent=t;s.append(e)};
+ days.forEach((d,i)=>{const v=d[metric],h=(v/mx)*(H-P*2),x=P+i*bw+5,r=document.createElementNS(NS,"rect");r.setAttribute("x",x);r.setAttribute("y",H-P-h);r.setAttribute("width",bw-10);r.setAttribute("height",Math.max(h,v?2:0));r.setAttribute("rx",5);r.setAttribute("fill",i===days.length-1?"#6a35d6":"#b79cf5");s.append(r);T(x+(bw-10)/2,H-P-h-5,v,"middle",11,"#2a1250");T(x+(bw-10)/2,H-8,d.date.slice(5),"middle",10,"#6f6590")});
+ $("chart").textContent="";$("chart").append(s);$("chart").scrollLeft=1e6}
+async function loadStats(){try{stats=await api({action:"stats"});cards();tabs();chart();$("smsg").className="note"}catch(e){$("smsg").textContent=e.message;$("smsg").className="msg err"}}
+async function loadFb(){try{const j=await api({action:"feedback"}),L=$("fblist");L.textContent="";$("fberr").textContent="";
+ if(stats&&stats.rating.count)$("fbavg").textContent="· average "+stats.rating.avg+" ★ ("+stats.rating.count+")";
+ if(!j.items.length)L.append(el("p","note","No feedback yet."));
+ j.items.forEach(f=>{const d=el("div","fb");d.append(el("span","s","★".repeat(f.rating)+"☆".repeat(5-f.rating)),el("small",0," · "+new Date(f.t).toLocaleString()));if(f.message)d.append(el("p",0,f.message));L.append(d)})}catch(e){$("fberr").textContent=e.message}}
+async function shrink(f){const b=await createImageBitmap(f),s=Math.min(1,1400/Math.max(b.width,b.height)),c=document.createElement("canvas");c.width=Math.round(b.width*s);c.height=Math.round(b.height*s);c.getContext("2d").drawImage(b,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.85)}
+function tile(p){const d=el("div","it"),i=new Image();i.alt="";i.src=prev[p.name]||p.url;i.onerror=()=>{i.remove();d.prepend(el("div","wait","Deploying… (1-2 min)"))};
+ d.append(i,el("b",0,p.name.length>16?p.name.slice(0,14)+"…":p.name));
+ const x=el("button",0,"Delete");x.onclick=async()=>{if(!confirm("Delete this photo?"))return;x.disabled=true;try{await api({action:"delete",name:p.name});say("Deleted. The site updates in 1-2 minutes.","ok");await loadGal()}catch(e){say(e.message,"err");x.disabled=false}};d.append(x);return d}
+async function loadGal(){try{const j=await api({action:"list"}),g=$("grid");g.textContent="";j.photos.forEach(p=>g.append(tile(p)));if(!j.photos.length)g.textContent="No photos yet."}catch(e){say(e.message,"err")}}
+$("go").onclick=async()=>{pw=$("pw").value;$("lerr").textContent="";try{await api({action:"ping"});$("login").hidden=true;$("panel").hidden=false;await loadStats();loadFb();loadGal()}catch(e){$("lerr").textContent=e.message}};
 $("pw").addEventListener("keydown",e=>{if(e.key==="Enter")$("go").click()});
-$("up").onclick=async()=>{const fs=[...$("files").files];if(!fs.length)return say("Choose photos first.","err");$("up").disabled=true;let n=0;try{for(const f of fs){say("Uploading "+(n+1)+" of "+fs.length+"...");const data=await shrink(f);const j=await api({action:"upload",data});prev[j.name]=data;n++}say(n+" photo(s) saved to GitHub. Live in 1-2 minutes.","ok");$("files").value="";await load()}catch(e){say(e.message+(n?" ("+n+" saved)":""),"err")}$("up").disabled=false};
+$("up").onclick=async()=>{const fs=[...$("files").files];if(!fs.length)return say("Choose photos first.","err");$("up").disabled=true;let n=0;try{for(const f of fs){say("Uploading "+(n+1)+" of "+fs.length+"...");const data=await shrink(f),j=await api({action:"upload",data});prev[j.name]=data;n++}say(n+" photo(s) saved to GitHub. Live in 1-2 minutes.","ok");$("files").value="";await loadGal()}catch(e){say(e.message+(n?" ("+n+" saved)":""),"err")}$("up").disabled=false};
 </script></body></html>

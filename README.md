@@ -44,3 +44,8 @@ Add `GEMINI_API_KEY=your_key_here` to a local `.env.local` file (never commit it
 - Chat history and memories are stored in the visitor's browser (localStorage). Every 4th message `/api/memory` updates a short memory list; Lisa gets it in her prompt (chat and voice).
 - Crisis words in chat show a support card (Tele-MANAS 14416, 112); Lisa's prompt (chat and voice) also has a safety rule.
 - Rate limits: chat 20/min & 300/day, memory 8/min & 100/day, voice 2/min & 10/day per visitor. For strong limits connect Upstash Redis or Vercel KV (env `UPSTASH_REDIS_REST_URL`/`TOKEN` or `KV_REST_API_URL`/`TOKEN`); without it a best-effort in-memory limit is used.
+
+## Stats, feedback, voices
+- Admin (`/admin.html`) shows visitors (unique anonymous devices), visits, chats, voice sessions, photos and feedback with a 14-day chart. This needs Upstash Redis / Vercel KV (same one used for rate limits). Without it, feedback falls back to an email draft and the admin shows how to connect it.
+- Voice: 10 female Gemini voices (Sulafat default). The choice is saved on the device. A screen wake lock keeps the screen on during a voice session; browsers stop the microphone when the screen is turned off.
+- Lisa greets in voice with only "Hello" / "Hi there". Photo questions ("kab / kahan") send the last photo to Gemini so Lisa can describe it.

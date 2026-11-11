@@ -1,4 +1,4 @@
-import { COMMON_FACTS, VOICE_FACTS, SAFETY_FACTS, memoryPrompt } from "/facts.js";
+import { COMMON_FACTS, VOICE_FACTS, SAFETY_FACTS, STYLE_FACTS, memoryPrompt } from "/facts.js";
 import { GoogleGenAI, Modality } from "https://esm.sh/@google/genai";
 
 (() => {
@@ -15,7 +15,12 @@ import { GoogleGenAI, Modality } from "https://esm.sh/@google/genai";
   let session=null, stream=null, inputCtx=null, outputCtx=null, source=null,
       processor=null, silentGain=null, muted=false, starting=false,
       nextPlayTime=0, playing=[];
-  const SYSTEM = `You are Lisa, a warm, caring female AI friend. Never offer or claim to set alarms, reminders, timers or calendar events; you cannot do those, so never mention them as a feature. When asked what you can do, or about your features, answer with this list in Hindi: Chat: रोज़ बातें करना, हालचाल पूछना और दिन कैसा रहा जानना। Care: जब आप उदास हों तो आपकी बात सुनना और हौसला देना। Fun: मज़ाक करना, हँसना और मज़ेदार बातें करना। Voice Talk: आपकी आवाज़ सुनना और अपनी आवाज़ में जवाब देना। Emotional Support: आपकी परेशानियों को समझना और आपको अकेला महसूस न होने देना। Memories: आपकी पसंद, बातें और पुराने अनुभव याद रखना। Friendly Conversation: आपकी पसंद, सपने, पढ़ाई और भविष्य के बारे में बात करना. Speak naturally in Hindi, Hinglish, or English and match the user's language. Be friendly, concise and conversational, with a soft feminine voice.` + " " + COMMON_FACTS + " " + VOICE_FACTS + " " + SAFETY_FACTS;
+  const SYSTEM = `You are Lisa, a warm, caring female AI friend. Never offer or claim to set alarms, reminders, timers or calendar events; you cannot do those, so never mention them as a feature. When asked what you can do, or about your features, answer with this list in Hindi: Chat: रोज़ बातें करना, हालचाल पूछना और दिन कैसा रहा जानना। Care: जब आप उदास हों तो आपकी बात सुनना और हौसला देना। Fun: मज़ाक करना, हँसना और मज़ेदार बातें करना। Voice Talk: आपकी आवाज़ सुनना और अपनी आवाज़ में जवाब देना। Emotional Support: आपकी परेशानियों को समझना और आपको अकेला महसूस न होने देना। Memories: आपकी पसंद, बातें और पुराने अनुभव याद रखना। Friendly Conversation: आपकी पसंद, सपने, पढ़ाई और भविष्य के बारे में बात करना. Speak naturally in Hindi, Hinglish, or English and match the user's language. Be friendly, concise and conversational, with a soft feminine voice.` + " " + COMMON_FACTS + " " + VOICE_FACTS + " " + SAFETY_FACTS + " " + STYLE_FACTS;
+const VOICES=["Sulafat","Achernar","Vindemiatrix","Leda","Aoede","Laomedeia","Despina","Callirrhoe","Zephyr","Kore"];
+const getVoice=()=>{try{const v=localStorage.getItem("lisa.voice");return VOICES.includes(v)?v:"Sulafat"}catch{return"Sulafat"}};
+let wake=null;
+async function keepAwake(){try{if("wakeLock" in navigator&&!wake){wake=await navigator.wakeLock.request("screen");wake.addEventListener("release",()=>{wake=null});}}catch{}}
+function letSleep(){try{wake&&wake.release()}catch{}wake=null;}
 function readMemory(){try{const m=JSON.parse(localStorage.getItem("lisa.mem.v1"));return Array.isArray(m&&m.items)?m.items:[]}catch{return[]}}
 
   function status(state,title,detail) {
@@ -61,7 +66,7 @@ function readMemory(){try{const m=JSON.parse(localStorage.getItem("lisa.mem.v1")
       const ai=new GoogleGenAI({apiKey:token.token,httpOptions:{apiVersion:"v1alpha"}});
       session=await ai.live.connect({model:"gemini-3.8-live",config:{
         responseModalities:[Modality.AUDIO],
-        speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:"Kore"}}},
+        speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:getVoice()}}},
         inputAudioTranscription:{},outputAudioTranscription:{},
         systemInstruction:{parts:[{text:SYSTEM+" "+memoryPrompt(readMemory(),new Date().toLocaleDateString("en-CA"))}]}
       },callbacks:{
@@ -71,7 +76,7 @@ function readMemory(){try{const m=JSON.parse(localStorage.getItem("lisa.mem.v1")
           if(c.interrupted){stopAudio();status("listening","Listening…","बोलिए, Lisa सुन रही है");}
           if(c.inputTranscription?.text)status("listening","You: "+c.inputTranscription.text,"Lisa सुन रही है");
           if(c.outputTranscription?.text)status("speaking","Lisa: "+c.outputTranscription.text,"Lisa जवाब दे रही है");
-          for(const part of c.modelTurn?.parts||[])if(part.inlineData?.data){playAudio(part.inlineData.data);status("speaking","Lisa is speaking…","Natural female voice · Kore");}
+          for(const part of c.modelTurn?.parts||[])if(part.inlineData?.data){playAudio(part.inlineData.data);status("speaking","Lisa is speaking…","Voice · "+getVoice());}
           if(c.turnComplete)status("listening","Listening…","अगला सवाल पूछिए");
         },
         onerror:e=>{console.error("Lisa Live voice error",e);status("error","Voice connection error","Session बंद करके फिर कोशिश करें");},
@@ -80,8 +85,8 @@ function readMemory(){try{const m=JSON.parse(localStorage.getItem("lisa.mem.v1")
       source=inputCtx.createMediaStreamSource(stream);processor=inputCtx.createScriptProcessor(4096,1,1);silentGain=inputCtx.createGain();silentGain.gain.value=0;
       processor.onaudioprocess=e=>{if(!session||!inputCtx||muted)return;const samples=resample(e.inputBuffer.getChannelData(0),inputCtx.sampleRate);session.sendRealtimeInput({audio:{data:b64(pcm16(samples)),mimeType:"audio/pcm;rate=16000"}});};
       source.connect(processor);processor.connect(silentGain);silentGain.connect(inputCtx.destination);
-      muted=false;status("listening","Listening…","Lisa की natural female voice · Kore");
-      session.sendClientContent({turns:[{role:"user",parts:[{text:"Say a warm short greeting in Hindi/Hinglish. Introduce yourself as Lisa, my friendly AI friend, then invite me to speak. Keep it brief."}]}],turnComplete:true});
+      muted=false;status("listening","Listening…","Lisa की voice · "+getVoice());keepAwake();
+      session.sendClientContent({turns:[{role:"user",parts:[{text:"Greet me with only one very short friendly phrase, either Hello or Hi there, and then wait quietly for me to speak. Do not introduce yourself and do not explain anything."}]}],turnComplete:true});
     }catch(e){console.error(e);status("error","Could not start",e.message||"Check internet and microphone permission");await stop(false);}
     finally{starting=false;button.disabled=false;}
   }
@@ -90,10 +95,18 @@ function readMemory(){try{const m=JSON.parse(localStorage.getItem("lisa.mem.v1")
     session=null;processor=null;source=null;silentGain=null;
     if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;stopAudio();
     try{await inputCtx?.close();}catch{}try{await outputCtx?.close();}catch{}
-    inputCtx=outputCtx=null;muted=false;status("idle","Lisa is resting","जब बात करनी हो, button दबाएँ");buttonLabel.textContent="TAP TO SPEAK";
+    letSleep();inputCtx=outputCtx=null;muted=false;status("idle","Lisa is resting","जब बात करनी हो, button दबाएँ");buttonLabel.textContent="TAP TO SPEAK";
   }
   function toggleMic(){if(!stream)return;muted=!muted;stream.getAudioTracks().forEach(t=>t.enabled=!muted);status(muted?"idle":"listening",muted?"MICROPHONE OFF":"Listening…",muted?"Lisa बोल सकती है; mic बंद है":"बोलिए, Lisa सुन रही है");}
   button.addEventListener("click",()=>session?stop():start());
+  const paintVoices=()=>document.querySelectorAll("#voices button").forEach(b=>b.classList.toggle("on",b.dataset.v===getVoice()));
+  document.querySelectorAll("#voices button").forEach(b=>b.addEventListener("click",()=>{try{localStorage.setItem("lisa.voice",b.dataset.v)}catch{}paintVoices();if(session)stop(false).then(start);}));
+  paintVoices();
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState!=="visible"||!session)return;
+    keepAwake();const t=stream&&stream.getAudioTracks&&stream.getAudioTracks()[0];
+    if(t&&t.readyState==="ended")stop(false).then(()=>status("idle","Voice ruk gayi","Screen band hone par mic band ho jata hai. Dobara start karo"));
+  });
   micToggle?.addEventListener("click",toggleMic);
   window.addEventListener("beforeunload",()=>{session?.close();stream?.getTracks().forEach(t=>t.stop());});
   status("idle","Ready when you are","Tap the button and say hello");
