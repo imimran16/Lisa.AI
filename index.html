@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
-<meta name="color-scheme" content="only light">
+<meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#3b1f6e" />
 <title>Lisa — AI Friend — Your AI Companion</title>
 <link rel="icon" href="/icons/favicon.ico" sizes="any">
@@ -14,10 +14,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>(function(){try{var t=localStorage.getItem("lisa.theme");if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme="light"}})()</script>
 <link rel="stylesheet" href="/style.css" />
 </head>
 <body data-state="idle">
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol><symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol><symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></symbol><symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></symbol><symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol><symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></symbol><symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol><symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 1 1 12 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol><symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 17v4M17 19h4"/></symbol><symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z"/></symbol><symbol id="i-book" viewBox="0 0 24 24"><path d="M3 5.5C5 4 8.5 4 12 6c3.5-2 7-2 9-.5V19c-2-1.5-5.5-1.5-9 .5-3.5-2-7-2-9-.5z"/><path d="M12 6v13.5"/></symbol><symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 3 10.5l7 3 3 7z"/><path d="m21 3-11 10.5"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-8-4.7-8-10.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.5C20 15.3 12 20 12 20z"/></symbol></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol><symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol><symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></symbol><symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></symbol><symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></symbol><symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol><symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></symbol><symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol><symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 1 1 12 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol><symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 17v4M17 19h4"/></symbol><symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z"/></symbol><symbol id="i-book" viewBox="0 0 24 24"><path d="M3 5.5C5 4 8.5 4 12 6c3.5-2 7-2 9-.5V19c-2-1.5-5.5-1.5-9 .5-3.5-2-7-2-9-.5z"/><path d="M12 6v13.5"/></symbol><symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 3 10.5l7 3 3 7z"/><path d="m21 3-11 10.5"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-8-4.7-8-10.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.5C20 15.3 12 20 12 20z"/></symbol></svg>
 <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="side"><span></span><span></span><span></span></button>
 <div class="scrim" id="scrim"></div>
 <div class="app">
@@ -40,7 +41,7 @@
       <nav class="tabs"><a class="on" href="#">Home</a><a href="#creator">CreatorJourney</a><a href="#privacy">Privacy</a></nav>
       <div class="top-r">
         <span class="pill"><i class="dot"></i>Online</span>
-        <span class="bell"><svg class="ic "><use href="#i-bell"/></svg></span>
+        <button class="iconbtn" id="themeBtn" type="button" aria-label="Switch theme"><svg class="ic t-moon"><use href="#i-moon"/></svg><svg class="ic t-sun"><use href="#i-sun"/></svg></button>
         
       </div>
     </header>
@@ -103,7 +104,11 @@
       </div>
     </section>
     <section class="card doc priv" id="privacy">
-      <h2>Privacy Policy</h2>
+      <div class="story">
+        <h2>Privacy Policy</h2>
+        <p class="who">How Lisa handles your data</p>
+        <button class="cjbtn" id="privBtn" type="button" aria-expanded="false" aria-controls="privBody"><span>Read Privacy Policy</span><svg class="ic"><use href="#i-chev"/></svg></button>
+        <div id="privBody" hidden>
       <p>Your privacy matters. Lisa uses what you say only to talk with you.</p>
       <ul>
         <li>Your text messages are sent to our AI service so that Lisa can write a reply.</li>
@@ -114,7 +119,10 @@
         <li>Lisa is an AI companion, not a doctor or therapist. If you are in distress or in danger, please contact someone you trust or a local professional or emergency service.</li>
         <li>Questions about privacy? Contact the creator through the CreatorJourney section.</li>
       </ul>
+        </div>
+      </div>
     </section>
+    <footer class="foot">Lisa is an AI friend, not a doctor or therapist.<br>Made with care by Imran</footer>
   </main>
 </div>
 <div class="modal" id="chatModal" hidden>
@@ -309,13 +317,20 @@
   $("scrim").addEventListener("click", () => setMenu(false));
   document.querySelectorAll("#side a").forEach(a => a.addEventListener("click", () => setMenu(false)));
   document.addEventListener("keydown", e => { if (e.key === "Escape") { setMenu(false); closeChat(); closeMem(); if (!vf.hidden) closeVoice(); } });
-  const cj = $("cjBtn"), cb = $("storyBody");
-  const setCJ = o => { cb.hidden = !o; cj.setAttribute("aria-expanded", o); cj.querySelector("span").textContent = o ? "Close CreatorJourney" : "CreatorJourney"; };
-  cj.addEventListener("click", () => setCJ(cb.hidden));
-  document.querySelectorAll('a[href="#creator"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); setCJ(true); $("creator").scrollIntoView({behavior: "smooth"}); }));
+  function collapse(btn, body, closed, open, section, link) {
+    const set = o => { body.hidden = !o; btn.setAttribute("aria-expanded", o); btn.querySelector("span").textContent = o ? open : closed; };
+    btn.addEventListener("click", () => set(body.hidden));
+    document.querySelectorAll('a[href="' + link + '"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); set(true); $(section).scrollIntoView({behavior: "smooth"}); }));
+  }
+  collapse($("cjBtn"), $("storyBody"), "CreatorJourney", "Close CreatorJourney", "creator", "#creator");
+  collapse($("privBtn"), $("privBody"), "Read Privacy Policy", "Close Privacy Policy", "privacy", "#privacy");
 })();
 </script>
 <script>if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));</script>
 <script>(()=>{const b=document.getElementById("dlApp");try{if(b&&(matchMedia("(display-mode: standalone)").matches||document.referrer.startsWith("android-app://")||navigator.standalone))b.hidden=true}catch{}})();</script>
+<script>(()=>{const r=document.documentElement,b=document.getElementById("themeBtn"),m=document.querySelector('meta[name=theme-color]');
+const paint=()=>{const d=r.dataset.theme==="dark";if(m)m.setAttribute("content",d?"#140a2e":"#efe6ff");b.setAttribute("aria-label",d?"Switch to light mode":"Switch to dark mode")};
+b.addEventListener("click",()=>{const n=r.dataset.theme==="dark"?"light":"dark";r.dataset.theme=n;try{localStorage.setItem("lisa.theme",n)}catch{}paint()});paint();
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",e=>{if(!localStorage.getItem("lisa.theme")){r.dataset.theme=e.matches?"dark":"light";paint()}})}catch{}})();</script>
 </body>
 </html>
