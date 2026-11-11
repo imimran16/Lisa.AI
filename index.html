@@ -1,68 +1,426 @@
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><meta name="color-scheme" content="light">
-<title>Lisa Admin</title><link rel="icon" href="/icons/favicon.ico">
-<style>
-*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;font-family:system-ui,sans-serif;background:#f1eaff;color:#2a1250;padding:14px}
-.wrap{max-width:960px;margin:0 auto;display:grid;gap:14px}
-.box{background:#fff;border-radius:20px;padding:18px;box-shadow:0 8px 24px #7c4dff22;min-width:0}
-h1{margin:0;font-size:24px}h2{margin:0 0 10px;font-size:19px}input,button,textarea{font:inherit}
-input[type=password]{padding:12px;border:1px solid #d9ccf5;border-radius:12px;width:min(320px,100%)}
-button{padding:10px 16px;border:0;border-radius:12px;background:#6a35d6;color:#fff;font-weight:600;cursor:pointer}button:disabled{opacity:.6}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}.msg{min-height:20px;font-weight:600;font-size:14px}.err{color:#c0267a}.ok{color:#198754}.note{color:#6f6590;font-size:14px}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}.c{background:#f6f0ff;border-radius:14px;padding:12px}.c b{display:block;font-size:26px}.c span{font-size:13px;color:#6f6590}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 6px}.tabs button{background:#e9defd;color:#5b2fc9;padding:7px 12px;font-size:13px}.tabs button.on{background:#6a35d6;color:#fff}
-.chart{overflow-x:auto}.chart svg{display:block}
-.fb{border-top:1px solid #eee;padding:10px 0}.fb .s{color:#f5b301;letter-spacing:2px}.fb small{color:#6f6590}.fb p{margin:4px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:12px}
-.it{position:relative;border-radius:14px;overflow:hidden;background:#eee;aspect-ratio:3/4;display:grid;place-items:center}.it img{width:100%;height:100%;object-fit:cover;display:block}
-.it b{position:absolute;left:6px;top:6px;background:#000a;color:#fff;font-size:11px;padding:3px 8px;border-radius:10px}
-.it button{position:absolute;right:6px;bottom:6px;padding:6px 12px;background:#c0267a;font-size:13px}.wait{font-size:13px;color:#6f6590;text-align:center;padding:8px}
-input[type=file]{max-width:100%;min-width:0}
-</style></head><body><div class="wrap">
-<div class="box"><div class="row" style="justify-content:space-between"><h1>Lisa Admin</h1><button id="logout" type="button" hidden>Logout</button></div>
-<div id="login"><div class="row"><input id="pw" type="password" placeholder="Admin password" autocomplete="current-password"><button id="go">Login</button></div></div>
-<div class="msg err" id="lerr"></div></div>
-<div id="panel" hidden class="wrap" style="padding:0">
- <div class="box"><h2>Visitors &amp; usage</h2><div class="cards" id="cards"></div>
-  <div class="tabs" id="tabs"></div><div class="chart" id="chart"></div><p class="note" id="smsg">Last 14 days (India time). Visitors = unique devices (anonymous).</p></div>
- <div class="box"><h2>Feedback <span class="note" id="fbavg"></span></h2><div id="fblist"></div><p class="msg err" id="fberr"></p></div>
- <div class="box"><h2>Gallery</h2><p class="note">Photos are renamed automatically, saved in GitHub, and Lisa sends a random one in chat. Live after Vercel redeploys (1-2 min).</p>
-  <div class="row"><input id="files" type="file" accept="image/jpeg,image/png,image/webp" multiple><button id="up">Upload</button></div>
-  <div class="msg" id="msg"></div><div class="grid" id="grid"></div></div>
-</div></div>
+<html lang="hi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content" />
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#3b1f6e" />
+<title>Lisa — AI Friend — Your AI Companion</title>
+<link rel="icon" href="/icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>(function(){try{var t=localStorage.getItem("lisa.theme");if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme="light"}})()</script>
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body data-state="idle">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol><symbol id="i-chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol><symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol><symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></symbol><symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></symbol><symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></symbol><symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol><symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></symbol><symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol><symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 1 1 12 0c0 6 2 7 2 7H4s2-1 2-7"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol><symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 17v4M17 19h4"/></symbol><symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z"/></symbol><symbol id="i-book" viewBox="0 0 24 24"><path d="M3 5.5C5 4 8.5 4 12 6c3.5-2 7-2 9-.5V19c-2-1.5-5.5-1.5-9 .5-3.5-2-7-2-9-.5z"/><path d="M12 6v13.5"/></symbol><symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 3 10.5l7 3 3 7z"/><path d="m21 3-11 10.5"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-8-4.7-8-10.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.5C20 15.3 12 20 12 20z"/></symbol></svg>
+<button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="side"><span></span><span></span><span></span></button>
+<div class="scrim" id="scrim"></div>
+<div class="app">
+  <aside class="side" id="side">
+    <div class="logo"><span class="heart"><svg class="ic fill"><use href="#i-heart"/></svg></span><div><b>AI FRIEND</b><small>Your AI Companion</small></div></div>
+    <nav>
+      <a class="on" href="#home"><svg class="ic "><use href="#i-home"/></svg> Home</a>
+      <a href="#chat"><svg class="ic "><use href="#i-chat"/></svg> Chat</a>
+      <a href="#voice"><svg class="ic "><use href="#i-mic"/></svg> Voice</a>
+      <a href="#memories"><svg class="ic "><use href="#i-layers"/></svg> Memories</a>
+      <a href="#settings"><svg class="ic "><use href="#i-sliders"/></svg> Settings</a>
+      <a href="#creator"><svg class="ic "><use href="#i-user"/></svg> CreatorJourney</a>
+      <a href="#contact"><svg class="ic"><use href="#i-mail"/></svg> Contact</a>
+      <a href="#feedback"><svg class="ic"><use href="#i-star"/></svg> Feedback</a>
+      <a href="#privacy"><svg class="ic "><use href="#i-lock"/></svg> Privacy Policy</a>
+    </nav>
+    <div class="skyline" aria-hidden="true"></div>
+  </aside>
+  <main class="main">
+    <header class="top">
+      <nav class="tabs"><a class="on" href="#">Home</a><a href="#creator">CreatorJourney</a><a href="#privacy">Privacy</a></nav>
+      <div class="top-r">
+        <span class="pill"><i class="dot"></i>Online</span>
+        <button class="iconbtn" id="themeBtn" type="button" aria-label="Switch theme"><svg class="ic t-moon"><use href="#i-moon"/></svg><svg class="ic t-sun"><use href="#i-sun"/></svg></button>
+        
+      </div>
+    </header>
+    <section class="hero">
+      <div class="portrait" aria-hidden="true"><img src="/photos/lisa.jpg" alt="Lisa" /></div>
+      <div class="hero-t">
+        <h1>Your AI Friend <span class="heart big"><svg class="ic fill"><use href="#i-heart"/></svg></span></h1>
+        <p>A little company, anytime.</p>
+        <div class="chips"><span><svg class="ic fill"><use href="#i-heart"/></svg> Chat</span><span><svg class="ic "><use href="#i-mic"/></svg> Voice Talk</span><span><svg class="ic "><use href="#i-sparkles"/></svg> Emotional Support</span><span><svg class="ic "><use href="#i-chat"/></svg> Always With You</span></div>
+        <a class="dl" id="dlApp" href="/downloads/Lisa.apk"><svg class="ic"><use href="#i-download"/></svg> Download Android App</a>
+      </div>
+    </section>
+    <section class="cards">
+      <div class="card chat-entry">
+        <img class="av big" src="/photos/lisa.jpg" alt="Lisa" />
+        <div><b>Chat with Lisa</b><small>Baatein karo, haal batao, dil halka karo.</small></div>
+        <button class="talk" id="openChat" type="button"><svg class="ic"><use href="#i-chat"/></svg> Open Chat</button>
+      </div>
+      <div class="right">
+        <div class="card voice" id="voice">
+          <div class="v-h"><i class="mic-c"><svg class="ic "><use href="#i-mic"/></svg></i><div><b>Voice Talk</b><small>Talk with your AI Friend in a natural voice.</small></div></div>
+          <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <button class="talk" id="openVoice" type="button"><svg class="ic"><use href="#i-mic"/></svg> Start Talking</button>
+        </div>
+        <div class="card qa">
+          <b>Quick Actions</b>
+          <div class="qa-g">
+            <button data-q="Mujhe thoda mood theek karna hai, baat karo"><svg class="ic "><use href="#i-heart"/></svg><span>Mood Chat</span></button>
+            <button data-q="Mujhe relax karne me help karo"><svg class="ic "><use href="#i-moon"/></svg><span>Relax Talk</span></button>
+            <button data-q="Mujhe ek chhoti si kahani sunao"><svg class="ic "><use href="#i-book"/></svg><span>Story</span></button>
+            <button data-q="Tum aur kya kar sakti ho?"><svg class="ic "><use href="#i-sparkles"/></svg><span>More</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="card doc" id="creator">
+      <img class="cphoto" src="/photos/creator.jpg" alt="Imran" />
+      <div class="story">
+        <h2>Imran</h2>
+        <p class="who">Creator of Lisa · Student · Developer · Lifelong Learner</p>
+        <button class="cjbtn" id="cjBtn" type="button" aria-expanded="false" aria-controls="storyBody"><span>CreatorJourney</span><svg class="ic"><use href="#i-chev"/></svg></button>
+        <div id="storyBody" hidden>
+        <p>to turn learning into something practical. It helps people examine an image and create a detailed prompt describing its visible subject, composition, lighting, colours and style. It is one project, not the end of the journey. For me, its value is that it represents a change: I am not only using tools made by others; I am learning how to build tools, solve problems and bring my own ideas into the world.</p>
+        <p>Behind every line of code is still a student preparing for Class 12, trying to balance school, study, curiosity and ambition. I do not have every answer at eighteen, and I do not need to pretend that I do. I have skills to strengthen, subjects to master, mistakes to correct and a great deal left to discover. I want to keep learning about software, artificial intelligence, business and finance—not because success is guaranteed, but because each of these fields gives me another way to understand the world and contribute to it.</p>
+        <p>My dream is to build a technology startup: to create products that solve real problems and earn people’s trust through usefulness, care and hard work. I know a dream alone cannot build a future. It takes discipline when motivation fades, humility when something fails, and the courage to keep improving without comparing every step to someone else’s finish line. I am grateful for how far curiosity has brought me, but I am even more interested in what patient effort can make possible from here.</p>
+        <blockquote>“I started with questions in Class 9. I am still asking questions at eighteen—and now I am learning to turn some of the answers into things I can build. My story is not a claim that I have already made it. It is a promise to keep learning, to work honestly, and to make the next step count.”<cite>— Imran<br>Student · Developer · Lifelong Learner</cite></blockquote>
+        </div>
+      </div>
+    </section>
+    <section class="card doc" id="contact">
+      <h2>Contact &amp; Projects</h2>
+      <p class="who">Say hi, try Imran’s other projects, or follow Lisa.</p>
+      <div class="links">
+        <a class="link" href="https://www.instagram.com/im.imran16?psln=bW5uNnp6bnBiaTAy" target="_blank" rel="noopener"><img src="/icons/instagram.png" alt="" width="44" height="44"><span><b>Imran on Instagram</b><small>@im.imran16</small></span></a>
+        <a class="link" href="https://www.instagram.com/lisa.friend64?vrfl=eXByYzB5Zm5yb2Fk" target="_blank" rel="noopener"><img src="/icons/instagram.png" alt="" width="44" height="44"><span><b>Lisa on Instagram</b><small>@lisa.friend64</small></span></a>
+        <a class="link" href="https://promptlens-ai-vercel.vercel.app/" target="_blank" rel="noopener"><img src="/icons/promptlens.png" alt="" width="44" height="44"><span><b>PromptLens AI</b><small>Image to detailed prompt website</small></span></a>
+        <a class="link" href="https://t.me/Maths_GPTAI_bot" target="_blank" rel="noopener"><img src="/icons/telegram.png" alt="" width="44" height="44"><span><b>Educator Bot</b><small>Maths helper on Telegram</small></span></a>
+        <a class="link" href="https://github.com/imimran16" target="_blank" rel="noopener"><img src="/icons/github.png" alt="" width="44" height="44"><span><b>GitHub</b><small>imimran16</small></span></a>
+        <a class="link" href="#feedback"><svg class="ic"><use href="#i-star"/></svg><span><b>Feedback</b><small>Tell Imran how Lisa feels</small></span></a>
+        <a class="link" href="mailto:mdimranahamad732@gmail.com"><svg class="ic"><use href="#i-mail"/></svg><span><b>Email</b><small>mdimranahamad732@gmail.com</small></span></a>
+      </div>
+    </section>
+    <section class="card doc priv" id="privacy">
+      <div class="story">
+        <h2>Privacy Policy</h2>
+        <p class="who">How Lisa handles your data</p>
+        <button class="cjbtn" id="privBtn" type="button" aria-expanded="false" aria-controls="privBody"><span>Read Privacy Policy</span><svg class="ic"><use href="#i-chev"/></svg></button>
+        <div id="privBody" hidden>
+      <p>Your privacy matters. Lisa uses what you say only to talk with you.</p>
+      <ul>
+        <li>Your text messages are sent to our AI service so that Lisa can write a reply.</li>
+        <li>In Voice Assistant, the microphone is on only while a voice session is running. It stops when you close the voice screen, and you can mute it at any time.</li>
+        <li>Your chat history and Lisa's memories are saved only on your own device (in your browser), not on our servers. You can delete them any time with the bin button in the chat, or Memories → Clear all.</li>
+        <li>To build memories, your recent messages are sent to our AI service. Please do not share passwords, OTPs, bank details or ID numbers with Lisa. Our hosting and AI providers may process requests as needed to deliver the service.</li>
+        <li>We count anonymous usage (visits, messages and voice sessions) using a random ID, never your name or what you wrote, only to see how many people use Lisa. If you send feedback, we store your rating and message.</li>
+        <li>We do not sell your personal data or share it with advertisers.</li>
+        <li>Lisa is an AI companion, not a doctor or therapist. If you are in distress or in danger, please contact someone you trust or a local professional or emergency service.</li>
+        <li>Questions about privacy? Contact the creator through the CreatorJourney section.</li>
+      </ul>
+        </div>
+      </div>
+    </section>
+    <footer class="foot">Lisa is an AI friend, not a doctor or therapist.<br>Made with care by Imran</footer>
+  </main>
+</div>
+<div class="modal" id="chatModal" hidden>
+      <div class="card chat" id="chat">
+        <div class="chat-h">
+          <img class="av" src="/photos/lisa.jpg" alt="Lisa" />
+          <div><b>Lisa <svg class="ic fill hs"><use href="#i-heart"/></svg></b><small id="chatSub">Your AI Friend</small></div>
+          <span class="on-l"><i class="dot"></i>Online</span><button class="x" id="clearChat" type="button" aria-label="Clear chat" title="Clear chat"><svg class="ic"><use href="#i-trash"/></svg></button><button class="x" id="closeChat" type="button" aria-label="Close chat"><svg class="ic"><use href="#i-x"/></svg></button>
+        </div>
+        <div class="msgs" id="msgs"><div class="m bot" id="greet">Hey 😊<br>I'm Lisa, I'm here! How are you today?</div></div>
+        <form class="composer" id="form">
+          <button type="button" class="plus"><svg class="ic "><use href="#i-plus"/></svg></button>
+          <input id="input" maxlength="500" placeholder="Type a message..." autocomplete="off" />
+          <button class="send" aria-label="Send"><svg class="ic "><use href="#i-send"/></svg></button>
+        </form>
+      </div>
+</div>
+<div class="modal" id="memModal" hidden>
+  <div class="card memcard">
+    <div class="chat-h"><div><b>Memories</b><small>Jo Lisa tumhare baare me yaad rakhti hai</small></div><button class="x" id="closeMem" type="button" aria-label="Close memories" style="margin-left:auto"><svg class="ic"><use href="#i-x"/></svg></button></div>
+    <p class="note" id="memEmpty">Abhi kuch yaad nahi hai. Thodi baat karo, Lisa tumhari pasand aur baatein yaad rakhna shuru kar degi.</p>
+    <ul id="memList"></ul>
+    <p class="note">Ye yaadein sirf tumhare phone/browser me rehti hain. Tum inhe kabhi bhi hata sakte ho.</p>
+    <button class="talk" id="memClear" type="button">Saari yaadein mitao</button>
+  </div>
+</div>
+<section class="public-feedback" aria-label="User feedback">
+  <div class="public-feedback-head"><h2>People love Lisa 💜</h2><p>Users ke latest reviews</p></div>
+  <div class="feedback-marquee" id="publicFeedback"><div class="feedback-track" id="feedbackTrack"><p class="feedback-empty">Abhi tak koi feedback nahi. Pehla feedback aap dein!</p></div></div>
+</section>
+<div class="modal center" id="fbModal" hidden>
+  <div class="card fbcard">
+    <div class="chat-h"><div><b>Feedback</b><small>Lisa kaisi lagi? Imran ko batao</small></div><button class="x" id="closeFb" type="button" aria-label="Close feedback" style="margin-left:auto"><svg class="ic"><use href="#i-x"/></svg></button></div>
+    <div id="fbForm">
+      <div class="stars" id="stars" role="group" aria-label="Rating"><button type="button" data-s="1" aria-label="1 star"><svg class="ic"><use href="#i-star"/></svg></button><button type="button" data-s="2" aria-label="2 star"><svg class="ic"><use href="#i-star"/></svg></button><button type="button" data-s="3" aria-label="3 star"><svg class="ic"><use href="#i-star"/></svg></button><button type="button" data-s="4" aria-label="4 star"><svg class="ic"><use href="#i-star"/></svg></button><button type="button" data-s="5" aria-label="5 star"><svg class="ic"><use href="#i-star"/></svg></button></div>
+      <input class="fbtext" id="fbName" maxlength="60" required placeholder="Apna naam likhein *" aria-label="Name">
+      <input class="fbtext" id="fbInstagram" maxlength="30" placeholder="Instagram ID (optional)" aria-label="Instagram ID">
+      <textarea class="fbtext" id="fbText" maxlength="500" required placeholder="Apna feedback likhein *" aria-label="Feedback"></textarea>
+      <p class="note" id="fbMsg"></p>
+      <button class="talk" id="fbSend" type="button">Send feedback</button>
+    </div>
+    <div id="fbThanks" hidden><p class="note" style="font-size:16px;color:var(--ink);text-align:center;margin:24px 0">Shukriya! Tumhara feedback Imran tak pahunch gaya 💜</p><button class="talk" id="fbDone" type="button">Close</button></div>
+  </div>
+</div>
+<div class="vfull" id="vfull" hidden>
+  <button class="x" id="closeVoice" type="button" aria-label="Close voice assistant"><svg class="ic"><use href="#i-x"/></svg></button>
+  <div class="vbody">
+    <div class="orb"><img src="/photos/lisa.jpg" alt="Lisa" /></div>
+    <h2>Lisa</h2><small>Voice Assistant</small>
+          <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <p class="status"><span id="statusLine">Ready when you are</span> <small id="statusDetail"></small></p>
+          <button class="talk" id="voiceButton" type="button"><span id="micIcon"><svg class="ic "><use href="#i-mic"/></svg></span> <span id="buttonLabel">Start Talking</span></button>
+          <button class="mic-t" id="micToggle" type="button" hidden aria-pressed="false"><span id="micToggleIcon"><svg class="ic"><use href="#i-mic"/><path class="slash" d="M3 3l18 18"/></svg></span> <span id="micToggleLabel">MIC ON</span></button>
+  </div>
+</div>
+<script type="module" src="/script.js"></script>
 <script>
-const $=id=>document.getElementById(id);let pw="",stats=null,metric="uv",sessionTimer=null;const prev={};
-function lockAdmin(){
-  clearTimeout(sessionTimer);pw="";$("pw").value="";$("panel").hidden=true;
-  $("login").hidden=false;$("logout").hidden=true;$("lerr").textContent="Admin session ended. Enter password again.";
-}
-function renewAdminSession(){clearTimeout(sessionTimer);sessionTimer=setTimeout(lockAdmin,15*60*1000);}
-async function api(b){if(!pw)throw Error("Admin login required.");renewAdminSession();const r=await fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json","x-admin-password":pw},body:JSON.stringify(b)});const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.error||("Error "+r.status));return j}
-const say=(t,c)=>{const m=$("msg");m.textContent=t;m.className="msg "+(c||"")};
-const M=[["uv","Visitors"],["visit","Visits"],["chat","Chat messages"],["voice","Voice sessions"],["photo","Photos sent"],["fb","Feedback"]];
-const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
-function cards(){const c=$("cards");c.textContent="";const t=stats.totals,d=stats.days[stats.days.length-1];
- [["Total visitors",t.uv],["Visitors today",d.uv],["Visits today",d.visit],["Chats today",d.chat],["Voice today",d.voice],["Photos today",d.photo],["Feedback",t.fb],["Avg rating",stats.rating.count?stats.rating.avg+" ★":"–"]].forEach(([l,v])=>{const x=el("div","c");x.append(el("b",0,v),el("span",0,l));c.append(x)})}
-function tabs(){const t=$("tabs");t.textContent="";M.forEach(([k,l])=>{const b=el("button",k===metric?"on":"",l);b.onclick=()=>{metric=k;tabs();chart()};t.append(b)})}
-function chart(){const days=stats.days,W=Math.max(340,days.length*46),H=190,P=26,mx=Math.max(1,...days.map(d=>d[metric])),bw=(W-P*2)/days.length,NS="http://www.w3.org/2000/svg";
- const s=document.createElementNS(NS,"svg");s.setAttribute("viewBox",`0 0 ${W} ${H}`);s.setAttribute("width",W);s.setAttribute("height",H);
- const T=(x,y,t,a,sz,f)=>{const e=document.createElementNS(NS,"text");e.setAttribute("x",x);e.setAttribute("y",y);e.setAttribute("text-anchor",a);e.setAttribute("font-size",sz);e.setAttribute("fill",f);e.textContent=t;s.append(e)};
- days.forEach((d,i)=>{const v=d[metric],h=(v/mx)*(H-P*2),x=P+i*bw+5,r=document.createElementNS(NS,"rect");r.setAttribute("x",x);r.setAttribute("y",H-P-h);r.setAttribute("width",bw-10);r.setAttribute("height",Math.max(h,v?2:0));r.setAttribute("rx",5);r.setAttribute("fill",i===days.length-1?"#6a35d6":"#b79cf5");s.append(r);T(x+(bw-10)/2,H-P-h-5,v,"middle",11,"#2a1250");T(x+(bw-10)/2,H-8,d.date.slice(5),"middle",10,"#6f6590")});
- $("chart").textContent="";$("chart").append(s);$("chart").scrollLeft=1e6}
-async function loadStats(){try{stats=await api({action:"stats"});cards();tabs();chart();$("smsg").className="note"}catch(e){$("smsg").textContent=e.message;$("smsg").className="msg err"}}
-async function loadFb(){try{const j=await api({action:"feedback"}),L=$("fblist");L.textContent="";$("fberr").textContent="";
- if(stats&&stats.rating.count)$("fbavg").textContent="· average "+stats.rating.avg+" ★ ("+stats.rating.count+")";
- if(!j.items.length)L.append(el("p","note","No feedback yet."));
- j.items.forEach(f=>{const d=el("div","fb"),top=el("div","row");top.style.justifyContent="space-between";const meta=el("div");meta.append(el("span","s","★".repeat(f.rating)+"☆".repeat(5-f.rating)),el("small",0,(f.instagram ? " · @"+f.instagram : "")+" · "+new Date(f.t).toLocaleString()));top.append(meta);const del=el("button",0,"Delete");del.style.background="#c0267a";del.onclick=async()=>{if(!confirm("Is feedback ko delete karna hai?"))return;del.disabled=true;try{await api({action:"feedback-delete",id:f.id});await loadFb();await loadStats()}catch(e){$("fberr").textContent=e.message;del.disabled=false}};top.append(del);d.append(top);d.append(el("p",0,"Name: "+(f.name||"—")));d.append(el("p",0,"Instagram: @"+(f.instagram||"—")));if(f.message)d.append(el("p",0,f.message));L.append(d)})}catch(e){$("fberr").textContent=e.message}}
-async function shrink(f){const b=await createImageBitmap(f),s=Math.min(1,1400/Math.max(b.width,b.height)),c=document.createElement("canvas");c.width=Math.round(b.width*s);c.height=Math.round(b.height*s);c.getContext("2d").drawImage(b,0,0,c.width,c.height);return c.toDataURL("image/jpeg",.85)}
-function tile(p){const d=el("div","it"),i=new Image();i.alt="";i.src=prev[p.name]||p.url;i.onerror=()=>{i.remove();d.prepend(el("div","wait","Deploying… (1-2 min)"))};
- d.append(i,el("b",0,p.name.length>16?p.name.slice(0,14)+"…":p.name));
- const x=el("button",0,"Delete");x.onclick=async()=>{if(!confirm("Delete this photo?"))return;x.disabled=true;try{await api({action:"delete",name:p.name});say("Deleted. The site updates in 1-2 minutes.","ok");await loadGal()}catch(e){say(e.message,"err");x.disabled=false}};d.append(x);return d}
-async function loadGal(){try{const j=await api({action:"list"}),g=$("grid");g.textContent="";j.photos.forEach(p=>g.append(tile(p)));if(!j.photos.length)g.textContent="No photos yet."}catch(e){say(e.message,"err")}}
-$("go").onclick=async()=>{pw=$("pw").value;$("lerr").textContent="";if(!pw){$("lerr").textContent="Enter admin password.";return}try{await api({action:"ping"});$("login").hidden=true;$("panel").hidden=false;$("logout").hidden=false;$("pw").value="";renewAdminSession();await loadStats();loadFb();loadGal()}catch(e){pw="";$("lerr").textContent=e.message}};
-$("logout").onclick=lockAdmin;
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&pw)renewAdminSession()});
-window.addEventListener("pagehide",()=>{clearTimeout(sessionTimer);pw=""});
-$("pw").addEventListener("keydown",e=>{if(e.key==="Enter")$("go").click()});
-$("up").onclick=async()=>{const fs=[...$("files").files];if(!fs.length)return say("Choose photos first.","err");$("up").disabled=true;let n=0;try{for(const f of fs){say("Uploading "+(n+1)+" of "+fs.length+"...");const data=await shrink(f),j=await api({action:"upload",data});prev[j.name]=data;n++}say(n+" photo(s) saved to GitHub. Live in 1-2 minutes.","ok");$("files").value="";await loadGal()}catch(e){say(e.message+(n?" ("+n+" saved)":""),"err")}$("up").disabled=false};
-</script></body></html>
+(() => {
+  const $ = id => document.getElementById(id);
+  // Small safe DOM helper used by the public feedback renderer.
+  const el = (tag, className, text) => {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined && text !== null) node.textContent = String(text);
+    return node;
+  };
+  const msgs = $("msgs"), input = $("input"), cm = $("chatModal"), mm = $("memModal"), vf = $("vfull"), vb = $("voiceButton"), burger = $("burger");
+  const store = {
+    get(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+  };
+  let log = store.get("lisa.chat.v1", []), hist = store.get("lisa.hist.v1", []), mem = store.get("lisa.mem.v1", {items: [], n: 0}), busy = false;
+  if (!Array.isArray(log)) log = []; if (!Array.isArray(hist)) hist = [];
+  if (!mem || !Array.isArray(mem.items)) mem = {items: [], n: 0};
+  const saveChat = () => { log = log.slice(-60); hist = hist.slice(-20); store.set("lisa.chat.v1", log); store.set("lisa.hist.v1", hist); };
+  const saveMem = () => store.set("lisa.mem.v1", mem);
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const vid = (() => { try { let v = localStorage.getItem("lisa.vid"); if (!v) { v = crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now(); localStorage.setItem("lisa.vid", v); } return v; } catch { return ""; } })();
+  const track = ev => { try { fetch("/api/track", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({e: ev, id: vid}), keepalive: true}).catch(() => {}); } catch {} };
+  try { if (!sessionStorage.getItem("lisa.s")) { sessionStorage.setItem("lisa.s", "1"); track("visit"); } } catch { track("visit"); }
+  let lastPhoto = null, lastPhotoAt = 0;
+  const setTyping = on => { const s = $("chatSub"); if (s) s.textContent = on ? "typing…" : "Your AI Friend"; };
+  const finish = (d, text) => { d.classList.remove("typing"); fill(d.querySelector(".txt"), text); d._e.text = text; };
+  async function imageB64(u) {
+    try {
+      const bmp = await createImageBitmap(await (await fetch(u)).blob()), s = Math.min(1, 640 / Math.max(bmp.width, bmp.height));
+      const c = document.createElement("canvas"); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
+      c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height); return c.toDataURL("image/jpeg", .8);
+    } catch { return null; }
+  }
+  const BUILT = ["/photos/lisa-gallery/lisa-photo-1.jpg", "/photos/lisa-gallery/lisa-photo-2.jpg", "/photos/lisa-gallery/lisa-photo-3.jpg"];
+  let photos = BUILT.slice(), last = null;
+  const cache = new Map(), MAX_PRELOAD = navigator.connection && navigator.connection.saveData ? 2 : 6;
+  const loaded = u => { const i = cache.get(u); return !!i && i.complete && i.naturalWidth > 0; };
+  function preload(u) {
+    if (cache.has(u)) return;
+    const i = new Image(); i.decoding = "async";
+    i.onerror = () => { cache.delete(u); photos = photos.filter(p => p !== u); };
+    i.src = u; cache.set(u, i);
+  }
+  function topUp() {
+    const rest = photos.filter(p => !cache.has(p));
+    if (rest.length) preload(rest[Math.floor(Math.random() * rest.length)]);
+    while (cache.size > MAX_PRELOAD) cache.delete(cache.keys().next().value);
+  }
+  const startPreload = () => photos.slice().sort(() => Math.random() - .5).slice(0, MAX_PRELOAD).forEach(preload);
+  fetch("/api/gallery").then(r => r.ok ? r.json() : null).then(j => {
+    if (j && Array.isArray(j.photos) && j.photos.length) photos = j.photos;
+  }).catch(() => {}).then(() => {
+    if (document.readyState === "complete") setTimeout(startPreload, 200);
+    else addEventListener("load", () => setTimeout(startPreload, 200));
+  });
+
+  const CAPS = ["Ye lo, meri ek photo 😊", "Lo, ye meri ek photo hai 💜", "Ye lo! Kaisi lagi? 😊"];
+  const PHOTO_RE = /(photo|foto|pic\b|pics\b|picture|selfie|tasveer|tasvir|फोटो|फ़ोटो|तस्वीर|तसवीर)/i;
+  const ASK_RE = /(bhej|send|show|dikha|dekh|\bde\b|\bdo\b|dena|dedo|chahiye|chahie|maang|mang|share|please|pls|plz|भेज|दिखा|दे|दो|दीजिए|चाहिए|चाहिये|मांग|देखन)/i;
+  const ABOUT_RE = /(kab|kahan|kaha |kidhar|where|when|jagah|bare me|baare me|ke bare|which place|konsi|kaun si|कब|कहाँ|कहां|कहा |जगह|बारे)/i;
+  const RISK_RE = /(suicid|sucide|khudkushi|khud\s?kushi|kill myself|end my life|want to die|wanna die|don'?t want to live|self[- ]?harm|hurt myself|cut myself|mar\s?jana|marna chah|mar jau|jeena nahi|jina nahi|jeene ka man nahi|zindagi khatam|life khatam|apni jaan|aatmhatya|आत्महत्या|खुदकुशी|खुद ?कुशी|मर जाना|मरना चाह|मर जाऊँ|मर जाऊं|जीना नहीं|जीने का मन नहीं|ज़िंदगी खत्म|जिंदगी खत्म|खुद को (खत्म|नुकसान|मार))/i;
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const pickPhoto = () => {
+    const ok = photos.filter(p => p !== last), pool = ok.length ? ok : photos;
+    const ready = pool.filter(loaded), p = pick(ready.length ? ready : pool);
+    last = p; lastPhoto = p; lastPhotoAt = Date.now(); setTimeout(topUp, 0); return p;
+  };
+  const t = () => new Date().toLocaleTimeString([], {hour: "numeric", minute: "2-digit"});
+  const ymd = () => new Date().toLocaleDateString("en-CA");
+  function fill(el, text) {
+    el.textContent = "";
+    text.split(/(https?:\/\/\S+)/g).forEach(part => {
+      if (/^https?:\/\//.test(part)) {
+        const url = part.replace(/[.,;:!?)]+$/, ""), a = document.createElement("a");
+        a.href = url; a.textContent = url; a.target = "_blank"; a.rel = "noopener"; el.append(a, part.slice(url.length));
+      } else el.append(part);
+    });
+  }
+  function careFill(s) {
+    const a = (n, label) => Object.assign(document.createElement("a"), {href: "tel:" + n, textContent: label});
+    s.textContent = "";
+    s.append("Main yahin hoon, aur tumhari baat sun rahi hoon 💜 Agar tum khud ko nuksan pahunchane ke baare me soch rahe ho, to abhi kisi apne ko bulao ya in se baat karo:\n• Tele-MANAS: ", a("14416", "14416"), " (free, 24x7, kai bhashaon me) ya ", a("18008914416", "1-800-891-4416"), "\n• Emergency: ", a("112", "112"));
+  }
+  function addImg(d, src, tries = 0, restored = false) {
+    const a = document.createElement("a"), i = new Image();
+    a.href = src; a.target = "_blank"; a.rel = "noopener"; i.src = src; i.alt = "Lisa"; i.className = "pic";
+    i.onload = () => { msgs.scrollTop = msgs.scrollHeight; };
+    i.onerror = () => {
+      a.remove(); cache.delete(src); photos = photos.filter(p => p !== src);
+      if (restored) return;
+      if (photos.length && tries < 3) addImg(d, pickPhoto(), tries + 1);
+      else d.querySelector(".txt").textContent = "Sorry, photo abhi load nahi ho paayi.";
+    };
+    a.append(i); d.insertBefore(a, d.querySelector("small"));
+  }
+  function render(e, restored) {
+    const d = document.createElement("div"), s = document.createElement("span");
+    d.className = "m " + e.who + (e.care ? " care" : ""); s.className = "txt";
+    if (e.care) careFill(s); else if (e.text === "…") { s.innerHTML = "<i></i><i></i><i></i>"; d.classList.add("typing"); } else fill(s, e.text || "");
+    d.append(s, Object.assign(document.createElement("small"), {textContent: e.time}));
+    if (e.img) addImg(d, e.img, 0, restored);
+    d._e = e; msgs.append(d); msgs.scrollTop = msgs.scrollHeight; return d;
+  }
+  function add(text, who, img, extra) {
+    const e = Object.assign({who, text, img: img || null, time: t()}, extra); log.push(e); saveChat(); return render(e);
+  }
+  log = log.filter(e => e && typeof e === "object" && e.text !== "…"); log.forEach(e => render(e, true));
+
+  async function updateMemory() {
+    try {
+      const r = await fetch("/api/memory", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({memory: mem.items, today: ymd(), messages: hist.slice(-8).map(h => ({role: h.role, text: h.parts[0].text}))})});
+      if (!r.ok) return;
+      const j = await r.json();
+      if (Array.isArray(j.memory)) { mem.items = j.memory.slice(0, 20); saveMem(); renderMem(); }
+    } catch {}
+  }
+  async function send(text) {
+    text = text.trim(); if (!text || busy) return; openChat();
+    add(text, "me"); hist.push({role: "user", parts: [{text}]}); saveChat();
+    const risk = RISK_RE.test(text);
+    if (risk) add("", "bot", null, {care: true});
+    busy = true; setTyping(true);
+    const wait = add("…", "bot");
+    try {
+      if (!risk && PHOTO_RE.test(text) && ASK_RE.test(text)) {
+        await sleep(2000 + Math.random() * 1000);
+        const c = pick(CAPS), p = pickPhoto();
+        finish(wait, c); wait._e.img = p; addImg(wait, p); hist.push({role: "model", parts: [{text: c}]}); saveChat(); track("photo");
+        return;
+      }
+      const t0 = Date.now();
+      const image = lastPhoto && Date.now() - lastPhotoAt < 600000 && ABOUT_RE.test(text) ? await imageB64(lastPhoto) : null;
+      const r = await fetch("/api/chat", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({contents: hist.slice(-11), memory: mem.items, today: ymd(), image})});
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw Object.assign(Error(j.error || "Error"), {rate: r.status === 429});
+      const wants = /\[\[PHOTO\]\]/.test(j.reply), reply = j.reply.replace(/\s*\[\[PHOTO\]\]\s*/g, " ").trim() || CAPS[0];
+      if (wants) await sleep(Math.max(0, 2000 + Math.random() * 1000 - (Date.now() - t0)));
+      finish(wait, reply); hist.push({role: "model", parts: [{text: reply}]});
+      if (wants) { const p = pickPhoto(); addImg(wait, p); wait._e.img = p; track("photo"); }
+      saveChat();
+      if (!risk) { mem.n = (mem.n || 0) + 1; saveMem(); if (mem.n % 4 === 0) updateMemory(); }
+    } catch (e) {
+      const m = e.rate ? e.message : "Sorry, abhi reply nahi aa paaya 😞 " + e.message;
+      finish(wait, m); hist.pop(); saveChat();
+    } finally { busy = false; setTyping(false); }
+  }
+  function renderMem() {
+    const ul = $("memList"); ul.textContent = ""; $("memEmpty").hidden = mem.items.length > 0;
+    mem.items.forEach((m, i) => {
+      const li = document.createElement("li"), s = document.createElement("span"), b = document.createElement("button");
+      s.textContent = m; b.type = "button"; b.className = "x sm"; b.setAttribute("aria-label", "Delete this memory");
+      b.innerHTML = '<svg class="ic"><use href="#i-x"/></svg>';
+      b.onclick = () => { mem.items.splice(i, 1); saveMem(); renderMem(); };
+      li.append(s, b); ul.append(li);
+    });
+  }
+  $("form").addEventListener("submit", e => { e.preventDefault(); const v = input.value; input.value = ""; send(v); });
+  document.querySelectorAll("[data-q]").forEach(b => b.addEventListener("click", () => send(b.dataset.q)));
+  $("clearChat").addEventListener("click", () => {
+    if (!confirm("Poori chat saaf kar du?")) return;
+    log = []; hist = []; saveChat(); [...msgs.children].forEach(c => { if (c.id !== "greet") c.remove(); });
+  });
+  $("memClear").addEventListener("click", () => { if (confirm("Lisa ki saari yaadein mita du?")) { mem = {items: [], n: 0}; saveMem(); renderMem(); } });
+
+  function openChat() { cm.hidden = false; input.focus(); }
+  function closeChat() { cm.hidden = true; }
+  function openMem() { renderMem(); mm.hidden = false; }
+  function closeMem() { mm.hidden = true; }
+  function openVoice() { vf.hidden = false; document.body.classList.add("noscroll"); if (!vb.classList.contains("active")) vb.click(); }
+  function closeVoice() { if (vb.classList.contains("active")) vb.click(); vf.hidden = true; document.body.classList.remove("noscroll"); }
+  const setMenu = o => { document.body.classList.toggle("menu-open", o); burger.setAttribute("aria-expanded", o); burger.setAttribute("aria-label", o ? "Close menu" : "Open menu"); };
+  $("openChat").addEventListener("click", openChat); $("closeChat").addEventListener("click", closeChat);
+  $("closeMem").addEventListener("click", closeMem); mm.addEventListener("click", e => { if (e.target === mm) closeMem(); });
+  $("openVoice").addEventListener("click", openVoice); $("closeVoice").addEventListener("click", closeVoice);
+  cm.addEventListener("click", e => { if (e.target === cm) closeChat(); });
+  document.querySelectorAll('a[href="#chat"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); openChat(); }));
+  document.querySelectorAll('a[href="#voice"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); openVoice(); }));
+  document.querySelectorAll('a[href="#memories"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); openMem(); }));
+  burger.addEventListener("click", () => setMenu(!document.body.classList.contains("menu-open")));
+  $("scrim").addEventListener("click", () => setMenu(false));
+  document.querySelectorAll("#side a").forEach(a => a.addEventListener("click", () => setMenu(false)));
+  document.addEventListener("keydown", e => { if (e.key === "Escape") { setMenu(false); closeChat(); closeMem(); closeFb(); if (!vf.hidden) closeVoice(); } });
+  const fm = $("fbModal"); let stars = 0;
+  function openFb() { fm.hidden = false; }
+  function closeFb() { fm.hidden = true; }
+  function paintStars() { document.querySelectorAll("#stars button").forEach(b => b.classList.toggle("on", +b.dataset.s <= stars)); }
+  document.querySelectorAll("#stars button").forEach(b => b.addEventListener("click", () => { stars = +b.dataset.s; paintStars(); }));
+  $("closeFb").addEventListener("click", closeFb); $("fbDone").addEventListener("click", closeFb);
+  fm.addEventListener("click", e => { if (e.target === fm) closeFb(); });
+  document.querySelectorAll('a[href="#feedback"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); $("fbForm").hidden = false; $("fbThanks").hidden = true; $("fbMsg").textContent = ""; openFb(); }));
+  $("fbSend").addEventListener("click", async () => {
+    const name=$("fbName").value.trim(), instagram=$("fbInstagram").value.trim().replace(/^@/, "");
+    const msg = $("fbText").value.trim(), out = $("fbMsg");
+    if (!stars) { out.textContent = "Pehle 1 se 5 star chuno ⭐"; return; }
+    if (!name || !msg) { out.textContent = "Naam aur feedback zaroori hain."; return; }
+    $("fbSend").disabled = true; out.textContent = "Feedback save ho raha hai…";
+    try {
+      const r = await fetch("/api/feedback", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({rating: stars, name, instagram, message: msg})});
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw Error(j.error || "Feedback save nahi hua.");
+      $("fbForm").hidden = true; $("fbThanks").hidden = false;
+      $("fbName").value=""; $("fbInstagram").value=""; $("fbText").value=""; stars = 0; paintStars();
+      loadPublicFeedback();
+    } catch (e) { out.textContent = e.message; } finally { $("fbSend").disabled = false; }
+  });
+  async function loadPublicFeedback(){
+    const track=$("feedbackTrack"); if(!track)return;
+    try{
+      track.parentElement.querySelectorAll(".feedback-track[aria-hidden='true']").forEach(n=>n.remove());
+      const r=await fetch("/api/feedback",{cache:"no-store"}); if(!r.ok)throw Error();
+      const j=await r.json(); track.textContent="";
+      if(!j.items.length){track.append(el("p","feedback-empty","Abhi tak koi feedback nahi. Pehla feedback aap dein!"));return;}
+      j.items.forEach(f=>{
+        const card=el("article","feedback-card");
+        card.append(el("div","feedback-stars","★".repeat(f.rating)+"☆".repeat(5-f.rating)));
+        const head=el("div","feedback-person",f.name+(f.instagram ? " · @"+f.instagram : ""));
+        card.append(head,el("p","feedback-message",f.message),el("small","feedback-date",new Date(f.t).toLocaleDateString()));
+        track.append(card);
+      });
+      if(j.items.length>1){const clone=track.cloneNode(true);clone.removeAttribute("id");clone.setAttribute("aria-hidden","true");track.parentElement.append(clone);}
+    }catch{track.textContent="Feedback abhi load nahi ho pa raha."}
+  }
+  loadPublicFeedback();
+  function collapse(btn, body, closed, open, section, link) {
+    const set = o => { body.hidden = !o; btn.setAttribute("aria-expanded", o); btn.querySelector("span").textContent = o ? open : closed; };
+    btn.addEventListener("click", () => set(body.hidden));
+    document.querySelectorAll('a[href="' + link + '"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); set(true); $(section).scrollIntoView({behavior: "smooth"}); }));
+  }
+  collapse($("cjBtn"), $("storyBody"), "CreatorJourney", "Close CreatorJourney", "creator", "#creator");
+  collapse($("privBtn"), $("privBody"), "Read Privacy Policy", "Close Privacy Policy", "privacy", "#privacy");
+})();
+</script>
+<script>if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));</script>
+<script>(()=>{const b=document.getElementById("dlApp");try{if(b&&(matchMedia("(display-mode: standalone)").matches||document.referrer.startsWith("android-app://")||navigator.standalone))b.hidden=true}catch{}})();</script>
+<script>(()=>{const r=document.documentElement,b=document.getElementById("themeBtn"),m=document.querySelector('meta[name=theme-color]');
+const paint=()=>{const d=r.dataset.theme==="dark";if(m)m.setAttribute("content",d?"#140a2e":"#efe6ff");b.setAttribute("aria-label",d?"Switch to light mode":"Switch to dark mode")};
+b.addEventListener("click",()=>{const n=r.dataset.theme==="dark"?"light":"dark";r.dataset.theme=n;try{localStorage.setItem("lisa.theme",n)}catch{}paint()});paint();
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",e=>{if(!localStorage.getItem("lisa.theme")){r.dataset.theme=e.matches?"dark":"light";paint()}})}catch{}})();</script>
+</body>
+</html>
