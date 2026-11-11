@@ -3,6 +3,9 @@
   "functions": {
     "api/gallery.js": {
       "includeFiles": "photos/lisa-gallery/**"
+    },
+    "api/download.js": {
+      "includeFiles": "downloads/Lisa.apk"
     }
   },
   "headers": [
@@ -25,23 +28,6 @@
         {
           "key": "Service-Worker-Allowed",
           "value": "/"
-        }
-      ]
-    },
-    {
-      "source": "/downloads/(.*)",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/vnd.android.package-archive"
-        },
-        {
-          "key": "Content-Disposition",
-          "value": "attachment; filename=\"Lisa.apk\""
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600"
         }
       ]
     },
