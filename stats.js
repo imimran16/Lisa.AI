@@ -30,8 +30,19 @@ export async function getStats(days = 14) {
   const sum = n(r[b + 1 + EVENTS.length]), cnt = n(r[b + 2 + EVENTS.length]);
   return { days: out, totals, rating: { avg: cnt ? Math.round(sum / cnt * 10) / 10 : 0, count: cnt } };
 }
-export async function saveFeedback(rating, message) {
-  await pipe([["LPUSH", "lisa:fb", JSON.stringify({ t: Date.now(), rating, message })], ["LTRIM", "lisa:fb", "0", "499"], ["INCRBY", "st:fbsum", String(rating)], ["INCR", "st:fbcnt"], ...trackCmds("fb")]);
+export async function saveFeedback(rating, name, instagram, message) {
+  const item = { id: crypto.randomUUID(), t: Date.now(), rating, name, instagram, message };
+  await pipe([["LPUSH", "lisa:fb", JSON.stringify(item)], ["LTRIM", "lisa:fb", "0", "499"], ["INCRBY", "st:fbsum", String(rating)], ["INCR", "st:fbcnt"], ...trackCmds("fb")]);
+  return item;
+}
+export async function deleteFeedback(id) {
+  const [rows] = await pipe([["LRANGE", "lisa:fb", "0", "-1"]]);
+  const raw = (rows || []).find(x => { try { return JSON.parse(x).id === id; } catch { return false; } });
+  if (!raw) return false;
+  await pipe([["LREM", "lisa:fb", "1", raw]]);
+  const item = JSON.parse(raw);
+  await pipe([["DECRBY", "st:fbsum", String(item.rating)], ["DECR", "st:fbcnt"]]);
+  return true;
 }
 export async function listFeedback(n = 50) {
   const [rows] = await pipe([["LRANGE", "lisa:fb", "0", String(n - 1)]]);

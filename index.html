@@ -152,12 +152,18 @@
     <button class="talk" id="memClear" type="button">Saari yaadein mitao</button>
   </div>
 </div>
+<section class="public-feedback" aria-label="User feedback">
+  <div class="public-feedback-head"><h2>People love Lisa 💜</h2><p>Users ke latest reviews</p></div>
+  <div class="feedback-marquee" id="publicFeedback"><div class="feedback-track" id="feedbackTrack"><p class="feedback-empty">Abhi tak koi feedback nahi. Pehla feedback aap dein!</p></div></div>
+</section>
 <div class="modal center" id="fbModal" hidden>
   <div class="card fbcard">
     <div class="chat-h"><div><b>Feedback</b><small>Lisa kaisi lagi? Imran ko batao</small></div><button class="x" id="closeFb" type="button" aria-label="Close feedback" style="margin-left:auto"><svg class="ic"><use href="#i-x"/></svg></button></div>
     <div id="fbForm">
       <div class="stars" id="stars" role="group" aria-label="Rating"><button type="button" data-s="1" aria-label="1 star"><svg class="ic"><use href="#i-star"/></svg></button><button type="button" data-s="2" aria-label="2 star"><svg class="ic"><use href="#i-star"/></svg></button><button type="button" data-s="3" aria-label="3 star"><svg class="ic"><use href="#i-star"/></svg></button><button type="button" data-s="4" aria-label="4 star"><svg class="ic"><use href="#i-star"/></svg></button><button type="button" data-s="5" aria-label="5 star"><svg class="ic"><use href="#i-star"/></svg></button></div>
-      <textarea class="fbtext" id="fbText" maxlength="500" placeholder="Kya accha laga? Kya sudhaarein? (optional)"></textarea>
+      <input class="fbtext" id="fbName" maxlength="60" required placeholder="Apna naam likhein *" aria-label="Name">
+      <input class="fbtext" id="fbInstagram" maxlength="30" placeholder="Instagram ID (optional)" aria-label="Instagram ID">
+      <textarea class="fbtext" id="fbText" maxlength="500" required placeholder="Apna feedback likhein *" aria-label="Feedback"></textarea>
       <p class="note" id="fbMsg"></p>
       <button class="talk" id="fbSend" type="button">Send feedback</button>
     </div>
@@ -362,20 +368,37 @@
   fm.addEventListener("click", e => { if (e.target === fm) closeFb(); });
   document.querySelectorAll('a[href="#feedback"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); $("fbForm").hidden = false; $("fbThanks").hidden = true; $("fbMsg").textContent = ""; openFb(); }));
   $("fbSend").addEventListener("click", async () => {
+    const name=$("fbName").value.trim(), instagram=$("fbInstagram").value.trim().replace(/^@/, "");
     const msg = $("fbText").value.trim(), out = $("fbMsg");
-    if (!stars) { out.textContent = "Pehle star chuno ⭐"; return; }
-    $("fbSend").disabled = true; out.textContent = "Bhej rahi hoon…";
+    if (!stars) { out.textContent = "Pehle 1 se 5 star chuno ⭐"; return; }
+    if (!name || !msg) { out.textContent = "Naam aur feedback zaroori hain."; return; }
+    $("fbSend").disabled = true; out.textContent = "Feedback save ho raha hai…";
     try {
-      const r = await fetch("/api/feedback", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({rating: stars, message: msg})});
+      const r = await fetch("/api/feedback", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({rating: stars, name, instagram, message: msg})});
       const j = await r.json().catch(() => ({}));
-      if (r.status === 503) {
-        const a = document.createElement("a"); a.href = "mailto:mdimranahamad732@gmail.com?subject=" + encodeURIComponent("Lisa feedback (" + stars + "/5)") + "&body=" + encodeURIComponent(msg); a.click();
-        out.textContent = "Email app khul raha hai, wahan se bhej do 💜"; return;
-      }
-      if (!r.ok) throw Error(j.error || "Error");
-      $("fbForm").hidden = true; $("fbThanks").hidden = false; $("fbText").value = ""; stars = 0; paintStars();
+      if (!r.ok) throw Error(j.error || "Feedback save nahi hua.");
+      $("fbForm").hidden = true; $("fbThanks").hidden = false;
+      $("fbName").value=""; $("fbInstagram").value=""; $("fbText").value=""; stars = 0; paintStars();
+      loadPublicFeedback();
     } catch (e) { out.textContent = e.message; } finally { $("fbSend").disabled = false; }
   });
+  async function loadPublicFeedback(){
+    const track=$("feedbackTrack"); if(!track)return;
+    try{
+      const r=await fetch("/api/feedback",{cache:"no-store"}); if(!r.ok)throw Error();
+      const j=await r.json(); track.textContent="";
+      if(!j.items.length){track.append(el("p","feedback-empty","Abhi tak koi feedback nahi. Pehla feedback aap dein!"));return;}
+      j.items.forEach(f=>{
+        const card=el("article","feedback-card");
+        card.append(el("div","feedback-stars","★".repeat(f.rating)+"☆".repeat(5-f.rating)));
+        const head=el("div","feedback-person",f.name+(f.instagram ? " · @"+f.instagram : ""));
+        card.append(head,el("p","feedback-message",f.message),el("small","feedback-date",new Date(f.t).toLocaleDateString()));
+        track.append(card);
+      });
+      if(j.items.length>1){const clone=track.cloneNode(true);clone.removeAttribute("id");clone.setAttribute("aria-hidden","true");track.parentElement.append(clone);}
+    }catch{track.textContent="Feedback abhi load nahi ho pa raha."}
+  }
+  loadPublicFeedback();
   function collapse(btn, body, closed, open, section, link) {
     const set = o => { body.hidden = !o; btn.setAttribute("aria-expanded", o); btn.querySelector("span").textContent = o ? open : closed; };
     btn.addEventListener("click", () => set(body.hidden));
