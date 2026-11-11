@@ -159,3 +159,16 @@ body[data-state=listening] .orb{box-shadow:0 0 0 10px #ffffff1a}
 #memList span{flex:1;min-width:0;overflow-wrap:anywhere}
 .x.sm{width:32px;height:32px}.x.sm .ic{width:16px;height:16px}
 @media(max-width:640px){#memModal .memcard{width:100%;height:100dvh;max-height:none;border-radius:0}}
+
+:root{color-scheme:only light}
+input,textarea,button,select{color-scheme:only light}
+.composer input{color:var(--ink);background:#fff}
+.links{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:14px}
+.link{display:flex;align-items:center;gap:12px;padding:12px;border-radius:18px;background:#fff;text-decoration:none;color:var(--ink);box-shadow:0 4px 14px #7c4dff22;min-width:0}
+.link img{width:44px;height:44px;border-radius:12px;object-fit:cover;flex:none}
+.link .ic{width:44px;height:44px;padding:10px;border-radius:12px;background:#e6dafb;color:var(--deep);flex:none}
+.link span{min-width:0}.link b{display:block}.link small{display:block;color:var(--mut);overflow-wrap:anywhere}
+.dl{display:inline-flex;align-items:center;gap:10px;margin-top:16px;padding:13px 22px;border-radius:26px;background:linear-gradient(90deg,#2b1556,#5b2fc9);color:#fff;font-weight:700;text-decoration:none;box-shadow:0 8px 20px #7c4dff55}
+.dl .ic{width:22px;height:22px}
+.skyline{pointer-events:none}
+.side{overflow-y:auto}.side nav{position:relative;z-index:1}
