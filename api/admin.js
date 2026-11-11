@@ -23,7 +23,7 @@ export default async function handler(req, res) {
   const pw = process.env.ADMIN_PASSWORD;
   if (!pw) return res.status(500).json({ error: "ADMIN_PASSWORD is not set in Vercel." });
   if (!same(req.headers["x-admin-password"], pw)) { await sleep(800); return res.status(401).json({ error: "Wrong password." }); }
-  const b0 = req.body || {};
+  const b0 = req.body && typeof req.body === "object" && !Array.isArray(req.body) ? req.body : {};
   if (b0.action === "ping") return res.status(200).json({ ok: true });
   if (b0.action === "stats" || b0.action === "feedback") {
     if (!hasStore()) return res.status(503).json({ error: "Upstash Redis (or Vercel KV) is not connected. In Vercel: Storage, create Upstash Redis, connect it to this project, then Redeploy." });
@@ -44,7 +44,7 @@ export default async function handler(req, res) {
       : r.status === 404 ? "GitHub repo or file not found. Check GITHUB_REPO (owner/repo) and that the token can access it."
       : j.message || "GitHub error " + r.status);
   };
-  const body = req.body || {};
+  const body = b0;
   try {
     let branch = process.env.GITHUB_BRANCH;
     if (!branch) { const r = await gh(""); if (!r.ok) await fail(r); branch = (await r.json()).default_branch; }
