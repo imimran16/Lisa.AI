@@ -300,5 +300,6 @@
   document.querySelectorAll('a[href="#creator"]').forEach(a => a.addEventListener("click", e => { e.preventDefault(); setCJ(true); $("creator").scrollIntoView({behavior: "smooth"}); }));
 })();
 </script>
+<script>if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));</script>
 </body>
 </html>
