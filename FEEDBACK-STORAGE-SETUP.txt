@@ -1,0 +1,22 @@
+LISA AI — FEEDBACK STORAGE SETUP
+
+This update replaces photos/lisa.jpg with the new Lisa DP you supplied and makes Instagram ID optional at the API level.
+
+WHY YOU SEE “Feedback storage is not connected”
+Feedback is stored in Upstash Redis (or Vercel KV). The website source cannot create/connect that database automatically. You must connect it once in Vercel:
+
+1. Open https://vercel.com/dashboard
+2. Select the Lisa AI project.
+3. Open Storage (or Marketplace / Integrations, depending on the Vercel UI).
+4. Create/connect an Upstash Redis database to this Lisa AI project.
+5. In Project → Settings → Environment Variables, make sure these variables exist:
+   UPSTASH_REDIS_REST_URL
+   UPSTASH_REDIS_REST_TOKEN
+   (If Vercel KV is used instead, use KV_REST_API_URL and KV_REST_API_TOKEN.)
+6. Ensure the values are the REST URL and REST token from the same database, with Production (and Preview if needed) selected.
+7. Save and Redeploy the project. A redeploy is required after adding environment variables.
+8. Test the feedback form again. The public feedback list and Admin → Feedback use the same database.
+
+Do not put Redis tokens in index.html, script.js, or any public file. Keep them only in Vercel Environment Variables.
+
+Upload the CONTENTS of this ZIP to the ROOT of the GitHub repository connected to Vercel, replacing the corresponding files. Do not upload the ZIP as a single file.

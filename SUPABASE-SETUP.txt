@@ -1,0 +1,19 @@
+LISA AI — SUPABASE FEEDBACK SETUP
+
+1) In Supabase Dashboard, open SQL Editor → New query.
+2) Paste the full contents of SUPABASE-FEEDBACK-TABLE.sql and click Run.
+3) In Vercel → Lisa AI project → Settings → Environment Variables, ensure:
+   SUPABASE_URL = Supabase Project URL
+   SUPABASE_SECRET_KEY = Supabase Secret key (or service_role key)
+   Select Production and Preview.
+   The integration may have created these automatically. Check exact variable names.
+4) Save and Redeploy Vercel.
+5) Test the public feedback form, then Admin → Feedback.
+
+Security:
+- Never put SUPABASE_SECRET_KEY in browser JavaScript.
+- Never share or commit the secret key.
+- This update moves feedback create/list/delete to Supabase.
+- Visitor analytics still use the previous Upstash/KV storage and may show a separate
+  storage warning in the Admin Visitors & Usage section. Feedback itself is independent.
+- New feedback is sorted newest first.
