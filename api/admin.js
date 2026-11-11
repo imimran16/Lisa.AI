@@ -1,5 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
-import { hasStore, getStats, listFeedback } from "../stats.js";
+import { hasStore, getStats, listFeedback, deleteFeedback } from "../stats.js";
 
 const DIR = "photos/lisa-gallery";
 const API = process.env.GITHUB_API_URL || "https://api.github.com";
@@ -25,6 +25,13 @@ export default async function handler(req, res) {
   if (!same(req.headers["x-admin-password"], pw)) { await sleep(800); return res.status(401).json({ error: "Wrong password." }); }
   const b0 = req.body && typeof req.body === "object" && !Array.isArray(req.body) ? req.body : {};
   if (b0.action === "ping") return res.status(200).json({ ok: true });
+  if (b0.action === "feedback-delete") {
+    if (!hasStore()) return res.status(503).json({ error: "Feedback storage is not connected." });
+    const id = String(b0.id || "");
+    if (!id || id.length > 80) return res.status(400).json({ error: "Invalid feedback ID." });
+    try { const deleted = await deleteFeedback(id); return deleted ? res.status(200).json({ok:true}) : res.status(404).json({error:"Feedback not found."}); }
+    catch (e) { return res.status(502).json({error:"Could not delete feedback: "+e.message}); }
+  }
   if (b0.action === "stats" || b0.action === "feedback") {
     if (!hasStore()) return res.status(503).json({ error: "Upstash Redis (or Vercel KV) is not connected. In Vercel: Storage, create Upstash Redis, connect it to this project, then Redeploy." });
     try { return res.status(200).json(b0.action === "stats" ? await getStats(14) : await listFeedback(50)); }
