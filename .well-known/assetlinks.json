@@ -1,0 +1,15 @@
+
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.lisaai.app",
+      "sha256_cert_fingerprints": [
+        "E4:78:A6:00:93:CD:DF:65:94:DF:5D:B1:18:63:2A:21:D4:BE:88:31:4C:D3:50:A2:66:56:F7:97:E5:75:04:AA"
+      ]
+    }
+  }
+]
