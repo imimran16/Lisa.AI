@@ -1,4 +1,5 @@
 import { rateLimit } from "../ratelimit.js";
+import { track } from "../stats.js";
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
@@ -54,6 +55,7 @@ export default async function handler(req, res) {
       });
     }
 
+    await track("voice");
     return res.status(200).json({
       token: data.name
     });

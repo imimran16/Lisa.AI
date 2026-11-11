@@ -1,4 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
+import { hasStore, getStats, listFeedback } from "../stats.js";
 
 const DIR = "photos/lisa-gallery";
 const API = process.env.GITHUB_API_URL || "https://api.github.com";
@@ -22,6 +23,13 @@ export default async function handler(req, res) {
   const pw = process.env.ADMIN_PASSWORD;
   if (!pw) return res.status(500).json({ error: "ADMIN_PASSWORD is not set in Vercel." });
   if (!same(req.headers["x-admin-password"], pw)) { await sleep(800); return res.status(401).json({ error: "Wrong password." }); }
+  const b0 = req.body || {};
+  if (b0.action === "ping") return res.status(200).json({ ok: true });
+  if (b0.action === "stats" || b0.action === "feedback") {
+    if (!hasStore()) return res.status(503).json({ error: "Upstash Redis (or Vercel KV) is not connected. In Vercel: Storage, create Upstash Redis, connect it to this project, then Redeploy." });
+    try { return res.status(200).json(b0.action === "stats" ? await getStats(14) : await listFeedback(50)); }
+    catch (e) { return res.status(502).json({ error: "Could not read data: " + e.message }); }
+  }
   const missing = ["GITHUB_TOKEN", "GITHUB_REPO"].filter(k => !process.env[k]);
   if (missing.length) return res.status(500).json({ error: missing.join(" and ") + " not set in Vercel. See README (Gallery & Admin), then Redeploy." });
 

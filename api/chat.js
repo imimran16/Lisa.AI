@@ -1,4 +1,5 @@
-import { COMMON_FACTS, CHAT_FACTS, SAFETY_FACTS, memoryPrompt } from "../facts.js";
+import { COMMON_FACTS, CHAT_FACTS, SAFETY_FACTS, STYLE_FACTS, PHOTO_FACTS, memoryPrompt } from "../facts.js";
+import { track } from "../stats.js";
 import { rateLimit } from "../ratelimit.js";
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -12,6 +13,7 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: "Bahut zyada messages ho gaye. Thodi der baad phir baat karte hain \ud83d\udc9c" });
   }
 
+  const tracked = track("chat");
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return res.status(500).json({
@@ -39,6 +41,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Last message must be a user message." });
     }
 
+    const img = typeof body.image === "string" && body.image.length < 600000 && /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(body.image) ? body.image.split(",")[1] : null;
+    if (img) contents[contents.length - 1].parts.unshift({ inlineData: { mimeType: "image/jpeg", data: img } });
+
     const model = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
 
@@ -56,18 +61,20 @@ export default async function handler(req, res) {
               "Use 1 or 2 short sentences for ordinary questions, but give the full list when asked what you can do.",
               "Do not explain your reasoning or say that you are thinking. Avoid long introductions.",
               "Reply in the same language style the user uses: Hindi, Hinglish, or English.",
-              "Use natural spoken wording. No markdown, tables, headings, or emoji.",
+              "Use natural spoken wording. No markdown, tables or headings.",
               "If asked who you are, say you are Lisa, the user's AI friend.",
               COMMON_FACTS,
               CHAT_FACTS,
               SAFETY_FACTS,
+              STYLE_FACTS,
+              img ? PHOTO_FACTS : "",
               memoryPrompt(body.memory, body.today)
             ].join(" ")
           }]
         },
         contents,
         generationConfig: {
-          temperature: 0.4,
+          temperature: 0.7,
           maxOutputTokens: 500
         }
       })
@@ -93,6 +100,7 @@ export default async function handler(req, res) {
       });
     }
 
+    await tracked;
     return res.status(200).json({ reply });
   } catch (error) {
     console.error("Lisa API error:", error);
