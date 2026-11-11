@@ -19,7 +19,7 @@ button{padding:10px 16px;border:0;border-radius:12px;background:#6a35d6;color:#f
 .it button{position:absolute;right:6px;bottom:6px;padding:6px 12px;background:#c0267a;font-size:13px}.wait{font-size:13px;color:#6f6590;text-align:center;padding:8px}
 input[type=file]{max-width:100%;min-width:0}
 </style></head><body><div class="wrap">
-<div class="box"><h1>Lisa Admin</h1>
+<div class="box"><div class="row" style="justify-content:space-between"><h1>Lisa Admin</h1><button id="logout" type="button" hidden>Logout</button></div>
 <div id="login"><div class="row"><input id="pw" type="password" placeholder="Admin password" autocomplete="current-password"><button id="go">Login</button></div></div>
 <div class="msg err" id="lerr"></div></div>
 <div id="panel" hidden class="wrap" style="padding:0">
@@ -31,8 +31,13 @@ input[type=file]{max-width:100%;min-width:0}
   <div class="msg" id="msg"></div><div class="grid" id="grid"></div></div>
 </div></div>
 <script>
-const $=id=>document.getElementById(id);let pw="",stats=null,metric="uv";const prev={};
-async function api(b){const r=await fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json","x-admin-password":pw},body:JSON.stringify(b)});const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.error||("Error "+r.status));return j}
+const $=id=>document.getElementById(id);let pw="",stats=null,metric="uv",sessionTimer=null;const prev={};
+function lockAdmin(){
+  clearTimeout(sessionTimer);pw="";$("pw").value="";$("panel").hidden=true;
+  $("login").hidden=false;$("logout").hidden=true;$("lerr").textContent="Admin session ended. Enter password again.";
+}
+function renewAdminSession(){clearTimeout(sessionTimer);sessionTimer=setTimeout(lockAdmin,15*60*1000);}
+async function api(b){if(!pw)throw Error("Admin login required.");renewAdminSession();const r=await fetch("/api/admin",{method:"POST",headers:{"Content-Type":"application/json","x-admin-password":pw},body:JSON.stringify(b)});const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.error||("Error "+r.status));return j}
 const say=(t,c)=>{const m=$("msg");m.textContent=t;m.className="msg "+(c||"")};
 const M=[["uv","Visitors"],["visit","Visits"],["chat","Chat messages"],["voice","Voice sessions"],["photo","Photos sent"],["fb","Feedback"]];
 const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
@@ -54,7 +59,10 @@ function tile(p){const d=el("div","it"),i=new Image();i.alt="";i.src=prev[p.name
  d.append(i,el("b",0,p.name.length>16?p.name.slice(0,14)+"…":p.name));
  const x=el("button",0,"Delete");x.onclick=async()=>{if(!confirm("Delete this photo?"))return;x.disabled=true;try{await api({action:"delete",name:p.name});say("Deleted. The site updates in 1-2 minutes.","ok");await loadGal()}catch(e){say(e.message,"err");x.disabled=false}};d.append(x);return d}
 async function loadGal(){try{const j=await api({action:"list"}),g=$("grid");g.textContent="";j.photos.forEach(p=>g.append(tile(p)));if(!j.photos.length)g.textContent="No photos yet."}catch(e){say(e.message,"err")}}
-$("go").onclick=async()=>{pw=$("pw").value;$("lerr").textContent="";try{await api({action:"ping"});$("login").hidden=true;$("panel").hidden=false;await loadStats();loadFb();loadGal()}catch(e){$("lerr").textContent=e.message}};
+$("go").onclick=async()=>{pw=$("pw").value;$("lerr").textContent="";if(!pw){$("lerr").textContent="Enter admin password.";return}try{await api({action:"ping"});$("login").hidden=true;$("panel").hidden=false;$("logout").hidden=false;$("pw").value="";renewAdminSession();await loadStats();loadFb();loadGal()}catch(e){pw="";$("lerr").textContent=e.message}};
+$("logout").onclick=lockAdmin;
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&pw)renewAdminSession()});
+window.addEventListener("pagehide",()=>{clearTimeout(sessionTimer);pw=""});
 $("pw").addEventListener("keydown",e=>{if(e.key==="Enter")$("go").click()});
 $("up").onclick=async()=>{const fs=[...$("files").files];if(!fs.length)return say("Choose photos first.","err");$("up").disabled=true;let n=0;try{for(const f of fs){say("Uploading "+(n+1)+" of "+fs.length+"...");const data=await shrink(f),j=await api({action:"upload",data});prev[j.name]=data;n++}say(n+" photo(s) saved to GitHub. Live in 1-2 minutes.","ok");$("files").value="";await loadGal()}catch(e){say(e.message+(n?" ("+n+" saved)":""),"err")}$("up").disabled=false};
 </script></body></html>

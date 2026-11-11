@@ -16,8 +16,9 @@ import { GoogleGenAI, Modality } from "https://esm.sh/@google/genai";
       processor=null, silentGain=null, muted=false, starting=false,
       nextPlayTime=0, playing=[];
   const SYSTEM = `You are Lisa, a warm, caring female AI friend. Never offer or claim to set alarms, reminders, timers or calendar events; you cannot do those, so never mention them as a feature. When asked what you can do, or about your features, answer with this list in Hindi: Chat: रोज़ बातें करना, हालचाल पूछना और दिन कैसा रहा जानना। Care: जब आप उदास हों तो आपकी बात सुनना और हौसला देना। Fun: मज़ाक करना, हँसना और मज़ेदार बातें करना। Voice Talk: आपकी आवाज़ सुनना और अपनी आवाज़ में जवाब देना। Emotional Support: आपकी परेशानियों को समझना और आपको अकेला महसूस न होने देना। Memories: आपकी पसंद, बातें और पुराने अनुभव याद रखना। Friendly Conversation: आपकी पसंद, सपने, पढ़ाई और भविष्य के बारे में बात करना. Speak naturally in Hindi, Hinglish, or English and match the user's language. Be friendly, concise and conversational, with a soft feminine voice.` + " " + COMMON_FACTS + " " + VOICE_FACTS + " " + SAFETY_FACTS + " " + STYLE_FACTS;
-const VOICES=["Sulafat","Achernar","Vindemiatrix","Leda","Aoede","Laomedeia","Despina","Callirrhoe","Zephyr","Kore"];
-const getVoice=()=>{try{const v=localStorage.getItem("lisa.voice");return VOICES.includes(v)?v:"Sulafat"}catch{return"Sulafat"}};
+// One consistent voice across every Lisa voice session.
+const LISA_VOICE = "Sulafat";
+const getVoice = () => LISA_VOICE;
 let wake=null;
 async function keepAwake(){try{if("wakeLock" in navigator&&!wake){wake=await navigator.wakeLock.request("screen");wake.addEventListener("release",()=>{wake=null});}}catch{}}
 function letSleep(){try{wake&&wake.release()}catch{}wake=null;}
@@ -99,9 +100,7 @@ function readMemory(){try{const m=JSON.parse(localStorage.getItem("lisa.mem.v1")
   }
   function toggleMic(){if(!stream)return;muted=!muted;stream.getAudioTracks().forEach(t=>t.enabled=!muted);status(muted?"idle":"listening",muted?"MICROPHONE OFF":"Listening…",muted?"Lisa बोल सकती है; mic बंद है":"बोलिए, Lisa सुन रही है");}
   button.addEventListener("click",()=>session?stop():start());
-  const paintVoices=()=>document.querySelectorAll("#voices button").forEach(b=>b.classList.toggle("on",b.dataset.v===getVoice()));
-  document.querySelectorAll("#voices button").forEach(b=>b.addEventListener("click",()=>{try{localStorage.setItem("lisa.voice",b.dataset.v)}catch{}paintVoices();if(session)stop(false).then(start);}));
-  paintVoices();
+  // Voice selection is intentionally locked so Lisa always uses the same sweet voice.
   document.addEventListener("visibilitychange",()=>{
     if(document.visibilityState!=="visible"||!session)return;
     keepAwake();const t=stream&&stream.getAudioTracks&&stream.getAudioTracks()[0];
