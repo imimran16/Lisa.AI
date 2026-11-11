@@ -1,8 +1,15 @@
-import { COMMON_FACTS, CHAT_FACTS } from "../facts.js";
+import { COMMON_FACTS, CHAT_FACTS, SAFETY_FACTS, memoryPrompt } from "../facts.js";
+import { rateLimit } from "../ratelimit.js";
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Only POST requests are allowed." });
+  }
+
+  const lim = await rateLimit(req, "chat", 20, 300);
+  if (!lim.ok) {
+    res.setHeader("Retry-After", String(lim.retryAfter));
+    return res.status(429).json({ error: "Bahut zyada messages ho gaye. Thodi der baad phir baat karte hain \ud83d\udc9c" });
   }
 
   const apiKey = process.env.GEMINI_API_KEY;
@@ -25,7 +32,7 @@ export default async function handler(req, res) {
       const text = item && Array.isArray(item.parts)
         ? item.parts.map(part => typeof part.text === "string" ? part.text : "").join(" ").trim()
         : "";
-      return { role, parts: [{ text: text.slice(0, 3000) }] };
+      return { role, parts: [{ text: text.slice(0, role === "user" ? 1000 : 3000) }] };
     }).filter(item => item.parts[0].text);
 
     if (!contents.length || contents[contents.length - 1].role !== "user") {
@@ -52,7 +59,9 @@ export default async function handler(req, res) {
               "Use natural spoken wording. No markdown, tables, headings, or emoji.",
               "If asked who you are, say you are Lisa, the user's AI friend.",
               COMMON_FACTS,
-              CHAT_FACTS
+              CHAT_FACTS,
+              SAFETY_FACTS,
+              memoryPrompt(body.memory, body.today)
             ].join(" ")
           }]
         },

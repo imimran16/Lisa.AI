@@ -1,21 +1,4 @@
-
-// Rate limit: counts requests per visitor IP with Upstash Redis (REST API). If Upstash is not configured, it logs a warning and lets requests through.
-async function rateLimit(req, name, perMinute, perDay) {
-  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-  if (!url || !token) { console.warn("Rate limit skipped: Upstash is not configured."); return { ok: true }; }
-  const ip = String(req.headers["x-forwarded-for"] || req.headers["x-real-ip"] || "unknown").split(",")[0].trim();
-  const now = Date.now(), minute = Math.floor(now / 60000), day = Math.floor(now / 86400000);
-  const kMin = `rl:${name}:${ip}:m:${minute}`, kDay = `rl:${name}:${ip}:d:${day}`;
-  try {
-    const r = await fetch(`${url}/pipeline`, { method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify([["INCR", kMin], ["EXPIRE", kMin, "90"], ["INCR", kDay], ["EXPIRE", kDay, "90000"]]) });
-    if (!r.ok) throw new Error("Upstash status " + r.status);
-    const out = await r.json();
-    if (out[0].result > perMinute) return { ok: false, retryAfter: 60 - Math.floor(now / 1000) % 60 };
-    if (out[2].result > perDay) return { ok: false, retryAfter: 86400 - Math.floor(now / 1000) % 86400 };
-    return { ok: true };
-  } catch (e) { console.error("Rate limit error:", e.message); return { ok: true }; }
-}
+import { rateLimit } from "../ratelimit.js";
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
