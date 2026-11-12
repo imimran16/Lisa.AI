@@ -49,7 +49,14 @@ export default async function handler(req, res) {
     if(!message) return res.status(400).json({error:"Write a notification message."});
     if(!url.startsWith("/")&&!url.startsWith("https://lisaai-bay.vercel.app")) return res.status(400).json({error:"Use a Lisa AI website link."});
     try{
-      webpush.setVapidDetails(process.env.VAPID_SUBJECT||"mailto:admin@lisaai-bay.vercel.app",VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY);
+      // Accept either a full mailto:/https: subject or a plain email address.
+      // Also repair the common "milto:" typo and accidental leading slash.
+      let subject=String(process.env.VAPID_SUBJECT||"mailto:admin@lisaai-bay.vercel.app").trim().replace(/^\/+/,"");
+      if(/^milto:/i.test(subject)) subject=subject.replace(/^milto:/i,"mailto:");
+      if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(subject)) subject="mailto:"+subject;
+      if(!/^mailto:[^\s@]+@[^\s@]+\.[^\s@]+$/.test(subject)&&!/^https:\/\//i.test(subject))
+        throw new Error("VAPID_SUBJECT must be your email (name@example.com), mailto:name@example.com, or an https:// URL.");
+      webpush.setVapidDetails(subject,VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY);
       const subs=await listPushSubscriptions();let sent=0,failed=0;
       const payload=JSON.stringify({title,body:message,url});
       for(const s of subs){
