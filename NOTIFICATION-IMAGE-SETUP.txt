@@ -1,13 +1,21 @@
-LISA AI — TEMPORARY PHOTO NOTIFICATIONS
+LISA AI — TEMPORARY PHOTO PUSH NOTIFICATIONS
 
-1. Deploy this project to Vercel.
-2. In Supabase Dashboard > SQL Editor, run SUPABASE-NOTIFICATION-IMAGE-SETUP.sql.
-3. In Vercel Environment Variables, ensure SUPABASE_URL and SUPABASE_SECRET_KEY (or SUPABASE_SERVICE_ROLE_KEY) are set.
-4. Add CRON_SECRET with a long random value, then redeploy. Vercel runs /api/cleanup-notification-images daily at 03:00 UTC and removes notification photos older than 24 hours.
-5. Open /admin.html, log in, choose title/message, optionally choose a JPG/PNG/WebP photo, and send.
+WHAT CHANGED
+- Admin Panel now accepts an optional JPG/PNG/WebP notification image (max 3 MB).
+- Image is uploaded to Supabase Storage bucket lisa-temp-notifications.
+- Push payload includes the public image URL; service worker displays it with the Lisa icon.
+- Daily Vercel Cron removes bucket objects older than 24 hours.
+- Notification click uses the existing same-origin navigation handler; a verified TWA domain should open the installed app.
 
-Notes:
-- Notification photos are not saved to the GitHub gallery.
-- Photos are temporarily stored in a public Supabase Storage bucket under random filenames so push clients can fetch them. The scheduled cleanup deletes objects after 24 hours.
-- The push payload contains only the image URL, not image bytes.
-- This uses Lisa's existing VAPID Web Push subscriptions; it is not native Firebase Cloud Messaging.
+REQUIRED SETUP
+1. Supabase Dashboard > Storage > New bucket. Name: lisa-temp-notifications. Set Public bucket ON (push receivers need to fetch the image without signing in).
+2. Vercel Project > Settings > Environment Variables: ensure SUPABASE_URL and SUPABASE_SECRET_KEY (or SUPABASE_SERVICE_ROLE_KEY) are set. Keep the service-role key private.
+3. Set CRON_SECRET to a long random secret.
+4. Deploy this project to Vercel. The daily cron calls /api/cleanup-notification-images with Authorization: Bearer <CRON_SECRET>.
+5. Test from a phone that has Lisa installed and has enabled notifications.
+
+IMPORTANT LIMITATIONS
+- This is Web Push delivered to the PWA/TWA service worker, not Firebase Cloud Messaging native code. TWA can open the installed app only when Digital Asset Links verification is valid and the URL belongs to the verified origin.
+- Android/browser versions may render notification images differently. The icon path is /icons/icon-192.png.
+- Cleanup runs daily; an image can remain for up to about 48 hours (24h expiry plus next daily cleanup).
+- Supabase Storage usage/bandwidth may be subject to Supabase plan limits.
