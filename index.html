@@ -15,19 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script>(function(){try{var t=localStorage.getItem("lisa.theme");if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t}catch(e){document.documentElement.dataset.theme="light"}})()</script>
-<script>
-(function(){
-  try {
-    var ua = navigator.userAgent || "";
-    var appShell = matchMedia("(display-mode: standalone)").matches ||
-      matchMedia("(display-mode: fullscreen)").matches ||
-      document.referrer.indexOf("android-app://") === 0 ||
-      navigator.standalone === true ||
-      /;\\s*wv\\)/i.test(ua);
-    if (appShell) document.documentElement.classList.add("app-shell");
-  } catch(e) {}
-})();
-</script>
+<script>(function(){try{var ua=navigator.userAgent||"";var app=matchMedia("(display-mode: standalone)").matches||matchMedia("(display-mode: fullscreen)").matches||matchMedia("(display-mode: minimal-ui)").matches||navigator.standalone===true||document.referrer.indexOf("android-app://")===0||(/Android/i.test(ua)&&(/; wv\)/i.test(ua)||/Version\/[0-9.]+ Chrome\/[0-9.]+ Mobile Safari/i.test(ua)));if(app)document.documentElement.classList.add("lisa-android-app")}catch(e){}})()</script>
 <link rel="stylesheet" href="/style.css" />
 </head>
 <body data-state="idle">
@@ -435,7 +423,7 @@
 })();
 </script>
 <script>if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));</script>
-<script>(()=>{const b=document.getElementById("dlApp");try{if(b&&document.documentElement.classList.contains("app-shell"))b.hidden=true}catch{}})();</script>
+
 <script>(()=>{const r=document.documentElement,b=document.getElementById("themeBtn"),m=document.querySelector('meta[name=theme-color]');
 const paint=()=>{const d=r.dataset.theme==="dark";if(m)m.setAttribute("content",d?"#140a2e":"#efe6ff");b.setAttribute("aria-label",d?"Switch to light mode":"Switch to dark mode")};
 b.addEventListener("click",()=>{const n=r.dataset.theme==="dark"?"light":"dark";r.dataset.theme=n;try{localStorage.setItem("lisa.theme",n)}catch{}paint()});paint();

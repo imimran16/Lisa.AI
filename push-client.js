@@ -1,6 +1,12 @@
 (() => {
  const btn=document.getElementById("enableNotifications"), status=document.getElementById("notifyStatus");
  const nums=document.getElementById("appNumbers");
+ const isAndroidApp=()=>document.documentElement.classList.contains("lisa-android-app");
+ if(isAndroidApp()){
+   if(nums) nums.hidden=true;
+   const download=document.getElementById("dlApp");
+   if(download) download.hidden=true;
+ }
  const b64ToBytes=s=>{const p="=".repeat((4-s.length%4)%4),raw=atob((s+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from(raw,c=>c.charCodeAt(0));};
  async function loadInfo(){try{const r=await fetch("/api/app-info",{cache:"no-store"});if(!r.ok)return;const d=await r.json();nums.textContent=`${Number(d.displayDownloads||0).toLocaleString()} Downloaders · ${d.rating||0} ★ (${d.reviewCount||0} reviews)`;}catch{}}
  if(btn) btn.addEventListener("click",async()=>{
@@ -18,5 +24,5 @@
    }catch(e){status.textContent=e.message||"Could not enable notifications.";}
    finally{btn.disabled=false;}
  });
- loadInfo();
+ if(!isAndroidApp()) loadInfo();
 })();
