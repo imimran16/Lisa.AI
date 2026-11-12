@@ -39,3 +39,67 @@ export async function deleteSupabaseFeedback(id) {
   });
   return Array.isArray(rows) && rows.length > 0;
 }
+
+
+export async function supabaseRequest(path, options = {}) {
+  return request(path, options);
+}
+export async function savePushSubscription(sub) {
+  const row = {
+    endpoint: sub.endpoint,
+    p256dh: sub.keys?.p256dh || "",
+    auth: sub.keys?.auth || "",
+    updated_at: new Date().toISOString()
+  };
+  await request("lisa_push_subscriptions?on_conflict=endpoint", {
+    method: "POST",
+    headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
+    body: JSON.stringify([row])
+  });
+}
+export async function listPushSubscriptions() {
+  return request("lisa_push_subscriptions?select=endpoint,p256dh,auth");
+}
+export async function deletePushSubscription(endpoint) {
+  await request(`lisa_push_subscriptions?endpoint=eq.${encodeURIComponent(endpoint)}`, {
+    method: "DELETE", headers: { Prefer: "return=minimal" }
+  });
+}
+export async function getAppSettings() {
+  const rows = await request("lisa_app_settings?select=key,value");
+  return Object.fromEntries((rows || []).map(r => [r.key, r.value]));
+}
+export async function setAppSetting(keyName, value) {
+  await request("lisa_app_settings?on_conflict=key", {
+    method: "POST",
+    headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
+    body: JSON.stringify([{ key: keyName, value: String(value), updated_at: new Date().toISOString() }])
+  });
+}
+export async function recordApkDownload() {
+  await request("lisa_download_events", {
+    method: "POST", headers: { Prefer: "return=minimal" },
+    body: JSON.stringify([{ downloaded_at: new Date().toISOString() }])
+  });
+}
+export async function getDownloadCount() {
+  const r = await fetch(`${base()}/rest/v1/lisa_download_events?select=id`, {
+    method: "HEAD",
+    headers: { apikey: key(), Authorization: `Bearer ${key()}`, Prefer: "count=exact", Range: "0-0" },
+    cache: "no-store"
+  });
+  if (!r.ok) throw new Error(`Supabase download count error ${r.status}`);
+  const range = r.headers.get("content-range") || "";
+  const total = Number(range.split("/")[1]);
+  return Number.isFinite(total) ? total : 0;
+}
+export async function getPublicAppInfo() {
+  const [settings, downloads, feedback] = await Promise.all([
+    getAppSettings(),
+    getDownloadCount(),
+    listSupabaseFeedback(1000)
+  ]);
+  const items = feedback.items || [];
+  const avg = items.length ? Math.round(items.reduce((a, x) => a + Number(x.rating || 0), 0) / items.length * 10) / 10 : 0;
+  return { actualDownloads: downloads, displayDownloads: Number(settings.display_download_count ?? downloads), rating: avg, reviewCount: items.length };
+}

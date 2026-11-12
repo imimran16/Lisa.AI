@@ -52,7 +52,10 @@
         <h1>Your AI Friend <span class="heart big"><svg class="ic fill"><use href="#i-heart"/></svg></span></h1>
         <p>A little company, anytime.</p>
         <div class="chips"><span><svg class="ic fill"><use href="#i-heart"/></svg> Chat</span><span><svg class="ic "><use href="#i-mic"/></svg> Voice Talk</span><span><svg class="ic "><use href="#i-sparkles"/></svg> Emotional Support</span><span><svg class="ic "><use href="#i-chat"/></svg> Always With You</span></div>
-        <a class="dl" id="dlApp" href="/downloads/Lisa.apk"><svg class="ic"><use href="#i-download"/></svg> Download Android App</a>
+        <a class="dl" id="dlApp" href="/api/download"><svg class="ic"><use href="#i-download"/></svg> Download Android App</a>
+        <p id="appNumbers" class="app-numbers" aria-live="polite"></p>
+        <button class="notify-optin" id="enableNotifications" type="button">🔔 Enable Lisa Notifications</button>
+        <p id="notifyStatus" class="note" aria-live="polite"></p>
       </div>
     </section>
     <section class="cards">
@@ -422,5 +425,5 @@
 const paint=()=>{const d=r.dataset.theme==="dark";if(m)m.setAttribute("content",d?"#140a2e":"#efe6ff");b.setAttribute("aria-label",d?"Switch to light mode":"Switch to dark mode")};
 b.addEventListener("click",()=>{const n=r.dataset.theme==="dark"?"light":"dark";r.dataset.theme=n;try{localStorage.setItem("lisa.theme",n)}catch{}paint()});paint();
 try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",e=>{if(!localStorage.getItem("lisa.theme")){r.dataset.theme=e.matches?"dark":"light";paint()}})}catch{}})();</script>
-</body>
+<script src="/push-client.js" defer></script></body>
 </html>

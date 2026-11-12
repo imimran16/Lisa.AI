@@ -1,0 +1,68 @@
+LISA AI — ADMIN NOTIFICATIONS + DOWNLOAD COUNTER
+
+This ZIP adds:
+- Web Push notification opt-in for visitors/app users.
+- Admin form to send a notification to all opted-in devices.
+- Real successful APK download request counter (counted when /api/download returns the APK).
+- Admin-controlled display download number shown on the public homepage.
+- Overall average rating and review count in Admin and homepage.
+
+IMPORTANT LIMITATION
+A person is not automatically subscribed just because they downloaded the APK.
+They must open Lisa AI and tap “Enable Lisa Notifications”, then allow notifications.
+Only those opted-in devices can receive push messages. Devices with notifications disabled,
+uninstalled apps, or expired subscriptions will not receive them.
+
+DEPLOY
+1. Extract this ZIP and upload its CONTENTS to the ROOT of the GitHub repository connected to Vercel.
+2. Keep existing project files; replace matching files and add new files.
+3. Commit changes and wait for Vercel deployment.
+
+SUPABASE SQL
+1. Open Supabase project → SQL Editor → New Query.
+2. Paste and Run the entire file: SUPABASE-ADMIN-FEATURES.sql
+3. It creates lisa_push_subscriptions, lisa_download_events and lisa_app_settings.
+4. Existing lisa_feedback table is not changed.
+
+VERCEL ENVIRONMENT VARIABLES
+Keep your existing:
+  SUPABASE_URL
+  SUPABASE_SECRET_KEY
+  ADMIN_PASSWORD
+  GITHUB_TOKEN
+  GITHUB_REPO
+  (plus existing Gemini/AI variables)
+
+Add Web Push VAPID keys:
+  VAPID_PUBLIC_KEY
+  VAPID_PRIVATE_KEY
+  VAPID_SUBJECT
+
+Generate VAPID keys after installing dependencies locally:
+  npm install
+  node -e "const w=require('web-push'); console.log(w.generateVAPIDKeys())"
+
+The output contains publicKey and privateKey. Put the public key into VAPID_PUBLIC_KEY
+and private key into VAPID_PRIVATE_KEY. Set VAPID_SUBJECT to a contact URI, e.g.
+  mailto:YOUR-REAL-EMAIL@example.com
+Use your own real email. Do not put private key in frontend files or GitHub.
+
+After setting environment variables, Redeploy Vercel.
+
+TEST
+1. Open Lisa AI website or installed TWA app.
+2. Tap “Enable Lisa Notifications” and allow notifications.
+3. Login to /admin.html.
+4. In “Send push notification”, enter title/message and Send.
+5. Admin → App downloads & rating shows actual APK download count, editable display count,
+   average star rating and review total.
+6. Website homepage shows the display count and average rating.
+
+DOWNLOAD COUNT NOTE
+Only successful APK responses through /api/download are counted. Historical downloads
+from before this deployment cannot be reconstructed. Repeated downloads count as separate
+download events; this is a download counter, not unique-install telemetry.
+
+SECURITY
+Do not create public Supabase policies for these tables. The server uses SUPABASE_SECRET_KEY.
+Do not expose SUPABASE_SECRET_KEY or VAPID_PRIVATE_KEY in browser code.

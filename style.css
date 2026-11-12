@@ -180,3 +180,6 @@ body[data-state=speaking] .orb{box-shadow:0 0 0 16px rgba(255,255,255,.13),0 0 7
 .feedback-empty{padding:12px 18px;color:var(--muted,#776b8e)}
 @keyframes lisaFeedbackScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 @media(prefers-reduced-motion:reduce){.feedback-track{animation:none}}
+
+.app-numbers{margin:10px 0 4px;text-align:center;font-weight:700;color:var(--muted,#76658e);font-size:14px}
+.notify-optin{display:block;margin:10px auto 0;padding:11px 18px;border:1px solid #8a5ce5;border-radius:999px;background:transparent;color:inherit;font:inherit;font-weight:700;cursor:pointer}

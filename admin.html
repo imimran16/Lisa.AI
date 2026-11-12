@@ -25,6 +25,18 @@ input[type=file]{max-width:100%;min-width:0}
 <div id="panel" hidden class="wrap" style="padding:0">
  <div class="box"><h2>Visitors &amp; usage</h2><div class="cards" id="cards"></div>
   <div class="tabs" id="tabs"></div><div class="chart" id="chart"></div><p class="note" id="smsg">Last 14 days (India time). Visitors = unique devices (anonymous).</p></div>
+ <div class="box"><h2>App downloads &amp; rating</h2>
+  <div class="cards" id="downloadCards"></div>
+  <div class="row"><label for="displayDownloads">Number shown on website</label><input id="displayDownloads" type="number" min="0" step="1" style="width:150px"><button id="saveDownloads" type="button">Save display count</button></div>
+  <p class="msg" id="downloadMsg"></p>
+ </div>
+ <div class="box"><h2>Send push notification</h2>
+  <p class="note">Only people who installed/opened Lisa and enabled notifications will receive it.</p>
+  <div class="row"><input id="pushTitle" maxlength="60" placeholder="Notification title" style="width:min(100%,420px)"></div>
+  <div class="row"><textarea id="pushMessage" maxlength="180" rows="3" placeholder="Write your notification..." style="width:100%;padding:12px;border:1px solid #d9ccf5;border-radius:12px"></textarea></div>
+  <div class="row"><input id="pushUrl" value="/" placeholder="Tap destination (optional)" style="width:min(100%,420px)"><button id="sendPush" type="button">Send notification</button></div>
+  <p class="msg" id="pushMsg"></p>
+ </div>
  <div class="box"><h2>Feedback <span class="note" id="fbavg"></span></h2><div id="fblist"></div><p class="msg err" id="fberr"></p></div>
  <div class="box"><h2>Gallery</h2><p class="note">Photos are renamed automatically, saved in GitHub, and Lisa sends a random one in chat. Live after Vercel redeploys (1-2 min).</p>
   <div class="row"><input id="files" type="file" accept="image/jpeg,image/png,image/webp" multiple><button id="up">Upload</button></div>
@@ -59,7 +71,16 @@ function tile(p){const d=el("div","it"),i=new Image();i.alt="";i.src=prev[p.name
  d.append(i,el("b",0,p.name.length>16?p.name.slice(0,14)+"…":p.name));
  const x=el("button",0,"Delete");x.onclick=async()=>{if(!confirm("Delete this photo?"))return;x.disabled=true;try{await api({action:"delete",name:p.name});say("Deleted. The site updates in 1-2 minutes.","ok");await loadGal()}catch(e){say(e.message,"err");x.disabled=false}};d.append(x);return d}
 async function loadGal(){try{const j=await api({action:"list"}),g=$("grid");g.textContent="";j.photos.forEach(p=>g.append(tile(p)));if(!j.photos.length)g.textContent="No photos yet."}catch(e){say(e.message,"err")}}
-$("go").onclick=async()=>{pw=$("pw").value;$("lerr").textContent="";if(!pw){$("lerr").textContent="Enter admin password.";return}try{await api({action:"ping"});$("login").hidden=true;$("panel").hidden=false;$("logout").hidden=false;$("pw").value="";renewAdminSession();await loadStats();loadFb();loadGal()}catch(e){pw="";$("lerr").textContent=e.message}};
+async function loadDownloadSettings(){
+ try{
+  const d=await api({action:"download-settings"}),c=$("downloadCards");c.textContent="";
+  [["Actual APK downloads",d.actualDownloads],["Website display count",d.displayDownloads],["Overall rating",d.rating+" ★"],["Total reviews",d.reviewCount]].forEach(([label,value])=>{const x=el("div","c");x.append(el("b",0,value),el("span",0,label));c.append(x)});
+  $("displayDownloads").value=d.displayDownloads;
+ }catch(e){$("downloadMsg").textContent=e.message;$("downloadMsg").className="msg err"}
+}
+$("saveDownloads").onclick=async()=>{const b=$("saveDownloads");b.disabled=true;try{const d=await api({action:"download-settings-save",displayDownloads:$("displayDownloads").value});$("downloadMsg").textContent="Website display count saved: "+d.displayDownloads;$("downloadMsg").className="msg ok";await loadDownloadSettings()}catch(e){$("downloadMsg").textContent=e.message;$("downloadMsg").className="msg err"}b.disabled=false};
+$("sendPush").onclick=async()=>{const b=$("sendPush"),message=$("pushMessage").value.trim();if(!message){$("pushMsg").textContent="Write a message first.";return}if(!confirm("Send this notification to all users who enabled Lisa notifications?"))return;b.disabled=true;try{const d=await api({action:"push-send",title:$("pushTitle").value||"Lisa AI",message,url:$("pushUrl").value||"/"});$("pushMsg").textContent=`Sent: ${d.sent} · Failed: ${d.failed} · Subscribed devices: ${d.total}`;$("pushMsg").className="msg ok";$("pushMessage").value=""}catch(e){$("pushMsg").textContent=e.message;$("pushMsg").className="msg err"}b.disabled=false};
+$("go").onclick=async()=>{pw=$("pw").value;$("lerr").textContent="";if(!pw){$("lerr").textContent="Enter admin password.";return}try{await api({action:"ping"});$("login").hidden=true;$("panel").hidden=false;$("logout").hidden=false;$("pw").value="";renewAdminSession();await loadStats();loadFb();loadGal();loadDownloadSettings()}catch(e){pw="";$("lerr").textContent=e.message}};
 $("logout").onclick=lockAdmin;
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&pw)renewAdminSession()});
 window.addEventListener("pagehide",()=>{clearTimeout(sessionTimer);pw=""});
