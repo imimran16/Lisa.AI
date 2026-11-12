@@ -1,26 +1,21 @@
-LISA ADMIN — DOWNLOAD COUNTS AND PUSH NOTIFICATIONS
+LISA AI — ADMIN DOWNLOADS, RATING & PUSH SETUP
 
-1. In Supabase Dashboard, open SQL Editor and run the complete file:
-   SUPABASE-ADMIN-FEATURES.sql
-   This creates lisa_download_events, lisa_app_settings and lisa_push_subscriptions.
-
-2. Confirm Vercel has SUPABASE_URL and SUPABASE_SECRET_KEY (or
-   SUPABASE_SERVICE_ROLE_KEY) set, then redeploy.
-
-3. Admin > App downloads & rating shows:
-   - Original APK downloads: number of successful APK download requests recorded
-     by /api/download. This is not a count of unique people or installs.
-   - Website Downloaders count: the separate number you can edit and save.
-   The public website displays the saved Downloaders number plus average rating
-   and review count below the Download Android App button.
-
-4. Push notification opt-in has been moved into the website side menu so it is
-   no longer displayed below the download button. The Admin send form stays in
-   /admin.html.
-
-5. Set VAPID_SUBJECT in Vercel to your plain email address, for example:
-   mdimranahamad732@gmail.com
-   The server automatically converts it to mailto: and repairs a common milto:
-   typo. Never share VAPID_PRIVATE_KEY publicly.
-
-6. Redeploy after updating files or environment variables.
+1. Open Supabase Dashboard > SQL Editor > New query.
+2. Open SUPABASE-ADMIN-FEATURES.sql from this ZIP, copy the ENTIRE file, paste it into SQL Editor and press Run.
+   This creates lisa_download_events, lisa_app_settings and lisa_push_subscriptions, grants the server role access, and reloads the API schema cache.
+3. In Vercel > Project > Settings > Environment Variables, confirm:
+   SUPABASE_URL
+   SUPABASE_SECRET_KEY (or SUPABASE_SERVICE_ROLE_KEY)
+   VAPID_PUBLIC_KEY
+   VAPID_PRIVATE_KEY
+   VAPID_SUBJECT = your-email@gmail.com (plain email is accepted; server adds mailto:)
+   Never share or publish VAPID_PRIVATE_KEY or the Supabase secret/service-role key.
+4. Redeploy the Vercel project after the SQL and environment variable checks.
+5. Open /admin.html. The App downloads & rating section shows four separate cards:
+   - Original APK downloads: successful APK download requests counted by /api/download.
+   - Website Downloaders count: public number editable and saved by the admin.
+   - Overall app rating.
+   - Total reviews.
+   Original APK downloads count requests, not unique people or confirmed installs.
+6. Push notifications can be sent only to devices that opened Lisa and opted in to notifications.
+7. The public website shows the saved Website Downloaders count and rating/review summary under the app download area. The notification opt-in is in the side menu.
