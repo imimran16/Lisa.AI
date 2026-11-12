@@ -58,7 +58,25 @@ export default async function handler(req, res) {
         throw new Error("VAPID_SUBJECT must be your email (name@example.com), mailto:name@example.com, or an https:// URL.");
       webpush.setVapidDetails(subject,VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY);
       const subs=await listPushSubscriptions();let sent=0,failed=0;
-      const payload=JSON.stringify({title,body:message,url});
+      let imageUrl = "";
+      if (b0.imageData) {
+        const m = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$/.exec(String(b0.imageData));
+        if (!m) return res.status(400).json({error:"Choose a valid JPG, PNG or WebP image."});
+        const image = Buffer.from(m[2], "base64");
+        if (image.length > 1200 * 1024) return res.status(413).json({error:"Notification image must be 1.2 MB or smaller."});
+        const supabaseUrl = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || "").replace(/\/+$/, "");
+        const supabaseKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY || "";
+        if (!supabaseUrl || !supabaseKey) return res.status(503).json({error:"Connect Supabase to enable temporary notification images."});
+        const ext = m[1] === "jpeg" ? "jpg" : m[1];
+        const objectName = `push-${Date.now()}-${Math.random().toString(36).slice(2,10)}.${ext}`;
+        const bucket = "lisa-notification-temp";
+        const upload = await fetch(`${supabaseUrl}/storage/v1/object/${bucket}/${objectName}`, {
+          method:"POST", headers:{apikey:supabaseKey,Authorization:`Bearer ${supabaseKey}`,"Content-Type":`image/${m[1]}`,"x-upsert":"false"}, body:image
+        });
+        if (!upload.ok) throw new Error(`Temporary image upload failed (${upload.status}). Run the notification storage SQL setup.`);
+        imageUrl = `${supabaseUrl}/storage/v1/object/public/${bucket}/${objectName}`;
+      }
+      const payload=JSON.stringify({title,body:message,url,image:imageUrl});
       for(const s of subs){
         try{await webpush.sendNotification({endpoint:s.endpoint,keys:{p256dh:s.p256dh,auth:s.auth}},payload);sent++;}
         catch(e){failed++;if(e.statusCode===404||e.statusCode===410){try{const {deletePushSubscription}=await import("../supabase-feedback.js");await deletePushSubscription(s.endpoint)}catch{}}}
