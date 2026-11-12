@@ -183,3 +183,6 @@ body[data-state=speaking] .orb{box-shadow:0 0 0 16px rgba(255,255,255,.13),0 0 7
 
 .app-numbers{margin:10px 0 4px;text-align:center;font-weight:700;color:var(--muted,#76658e);font-size:14px}
 .notify-optin{display:block;margin:10px auto 0;padding:11px 18px;border:1px solid #8a5ce5;border-radius:999px;background:transparent;color:inherit;font:inherit;font-weight:700;cursor:pointer}
+
+/* Notification opt-in lives in the side menu, not under the download button. */
+.side-notifications{position:relative;z-index:1;margin-top:14px;padding:0 8px}.side-notifications .notify-optin{width:100%;font-size:14px}.side-notifications .note{font-size:12px;text-align:center;color:#d8c9ff;overflow-wrap:anywhere}

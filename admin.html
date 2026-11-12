@@ -27,7 +27,8 @@ input[type=file]{max-width:100%;min-width:0}
   <div class="tabs" id="tabs"></div><div class="chart" id="chart"></div><p class="note" id="smsg">Last 14 days (India time). Visitors = unique devices (anonymous).</p></div>
  <div class="box"><h2>App downloads &amp; rating</h2>
   <div class="cards" id="downloadCards"></div>
-  <div class="row"><label for="displayDownloads">Number shown on website</label><input id="displayDownloads" type="number" min="0" step="1" style="width:150px"><button id="saveDownloads" type="button">Save display count</button></div>
+  <p class="note">Original APK downloads are counted when the APK is successfully requested. Set the separate Downloaders number shown publicly below.</p>
+  <div class="row"><label for="displayDownloads">Website Downloaders count</label><input id="displayDownloads" type="number" min="0" step="1" style="width:150px"><button id="saveDownloads" type="button">Save display count</button></div>
   <p class="msg" id="downloadMsg"></p>
  </div>
  <div class="box"><h2>Send push notification</h2>
@@ -74,7 +75,7 @@ async function loadGal(){try{const j=await api({action:"list"}),g=$("grid");g.te
 async function loadDownloadSettings(){
  try{
   const d=await api({action:"download-settings"}),c=$("downloadCards");c.textContent="";
-  [["Actual APK downloads",d.actualDownloads],["Website display count",d.displayDownloads],["Overall rating",d.rating+" ★"],["Total reviews",d.reviewCount]].forEach(([label,value])=>{const x=el("div","c");x.append(el("b",0,value),el("span",0,label));c.append(x)});
+  [["Original APK downloads",d.actualDownloads],["Website Downloaders count",d.displayDownloads],["Overall app rating",d.rating+" ★"],["Total reviews",d.reviewCount]].forEach(([label,value])=>{const x=el("div","c");x.append(el("b",0,value),el("span",0,label));c.append(x)});
   $("displayDownloads").value=d.displayDownloads;
  }catch(e){$("downloadMsg").textContent=e.message;$("downloadMsg").className="msg err"}
 }

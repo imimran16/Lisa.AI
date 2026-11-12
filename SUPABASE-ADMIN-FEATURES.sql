@@ -1,3 +1,5 @@
+-- Run this entire script once in Supabase Dashboard > SQL Editor.
+-- These tables power Admin download totals, public display count and push subscriptions.
 -- Lisa AI admin features: push subscriptions, real APK download events, display counter
 create table if not exists public.lisa_push_subscriptions (
   endpoint text primary key,
