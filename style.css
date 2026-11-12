@@ -186,3 +186,10 @@ body[data-state=speaking] .orb{box-shadow:0 0 0 16px rgba(255,255,255,.13),0 0 7
 
 /* Notification opt-in lives in the side menu, not under the download button. */
 .side-notifications{position:relative;z-index:1;margin-top:14px;padding:0 8px}.side-notifications .notify-optin{width:100%;font-size:14px}.side-notifications .note{font-size:12px;text-align:center;color:#d8c9ff;overflow-wrap:anywhere}
+
+
+/* Public download totals and review showcase belong on the website only. */
+html.app-shell #appNumbers,
+html.app-shell .public-feedback {
+  display: none !important;
+}
