@@ -1,5 +1,5 @@
 // Network-first: always fresh when online, falls back to the last cached copy when offline. API calls are never cached.
-const CACHE = "lisa-v4";
+const CACHE = "lisa-v5";
 const SHELL = ["/", "/index.html", "/style.css", "/script.js", "/facts.js", "/manifest.webmanifest", "/photos/lisa.jpg", "/photos/creator.jpg", "/icons/icon-192.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -26,6 +26,7 @@ self.addEventListener("push", event => {
     body: data.body || "Lisa की तरफ़ से नया संदेश 💜",
     icon: "/icons/icon-192.png",
     badge: "/icons/icon-192.png",
+    ...(data.image ? { image: data.image } : {}),
     data: { url: data.url || "/" }
   }));
 });

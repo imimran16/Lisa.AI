@@ -1,0 +1,13 @@
+LISA AI — TEMPORARY PHOTO NOTIFICATIONS
+
+1. Deploy this project to Vercel.
+2. In Supabase Dashboard > SQL Editor, run SUPABASE-NOTIFICATION-IMAGE-SETUP.sql.
+3. In Vercel Environment Variables, ensure SUPABASE_URL and SUPABASE_SECRET_KEY (or SUPABASE_SERVICE_ROLE_KEY) are set.
+4. Add CRON_SECRET with a long random value, then redeploy. Vercel runs /api/cleanup-notification-images daily at 03:00 UTC and removes notification photos older than 24 hours.
+5. Open /admin.html, log in, choose title/message, optionally choose a JPG/PNG/WebP photo, and send.
+
+Notes:
+- Notification photos are not saved to the GitHub gallery.
+- Photos are temporarily stored in a public Supabase Storage bucket under random filenames so push clients can fetch them. The scheduled cleanup deletes objects after 24 hours.
+- The push payload contains only the image URL, not image bytes.
+- This uses Lisa's existing VAPID Web Push subscriptions; it is not native Firebase Cloud Messaging.

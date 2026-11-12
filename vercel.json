@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "crons": [{ "path": "/api/cleanup-notification-images", "schedule": "0 3 * * *" }],
   "functions": {
     "api/gallery.js": {
       "includeFiles": "photos/lisa-gallery/**"
