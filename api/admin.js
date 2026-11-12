@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { hasStore, getStats } from "../stats.js";
-import { hasSupabase, listSupabaseFeedback, deleteSupabaseFeedback } from "../supabase-feedback.js";
+import { hasSupabase, listSupabaseFeedback, deleteSupabaseFeedback, listPushSubscriptions, getAppSettings, setAppSetting, getDownloadCount } from "../supabase-feedback.js";
+import webpush from "web-push";
 
 const DIR = "photos/lisa-gallery";
 const API = process.env.GITHUB_API_URL || "https://api.github.com";
@@ -26,6 +27,38 @@ export default async function handler(req, res) {
   if (!same(req.headers["x-admin-password"], pw)) { await sleep(800); return res.status(401).json({ error: "Wrong password." }); }
   const b0 = req.body && typeof req.body === "object" && !Array.isArray(req.body) ? req.body : {};
   if (b0.action === "ping") return res.status(200).json({ ok: true });
+  if (["push-send","download-settings","download-settings-save"].includes(b0.action) && !hasSupabase())
+    return res.status(503).json({error:"Supabase is not connected."});
+  if (b0.action === "download-settings") {
+    try {
+      const [actual, settings, feedback] = await Promise.all([getDownloadCount(), getAppSettings(), listSupabaseFeedback(1000)]);
+      const items=feedback.items||[], avg=items.length?Math.round(items.reduce((a,x)=>a+Number(x.rating||0),0)/items.length*10)/10:0;
+      return res.status(200).json({actualDownloads:actual,displayDownloads:Number(settings.display_download_count ?? actual),rating:avg,reviewCount:items.length});
+    } catch(e){return res.status(502).json({error:e.message});}
+  }
+  if (b0.action === "download-settings-save") {
+    const n=Number(b0.displayDownloads);
+    if(!Number.isSafeInteger(n)||n<0||n>1000000000) return res.status(400).json({error:"Enter a valid non-negative download number."});
+    try{await setAppSetting("display_download_count",n);return res.status(200).json({ok:true,displayDownloads:n});}
+    catch(e){return res.status(502).json({error:e.message});}
+  }
+  if (b0.action === "push-send") {
+    const {VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY}=process.env;
+    if(!VAPID_PUBLIC_KEY||!VAPID_PRIVATE_KEY) return res.status(503).json({error:"VAPID keys are not configured in Vercel."});
+    const title=String(b0.title||"Lisa AI").trim().slice(0,60), message=String(b0.message||"").trim().slice(0,180), url=String(b0.url||"/").trim();
+    if(!message) return res.status(400).json({error:"Write a notification message."});
+    if(!url.startsWith("/")&&!url.startsWith("https://lisaai-bay.vercel.app")) return res.status(400).json({error:"Use a Lisa AI website link."});
+    try{
+      webpush.setVapidDetails(process.env.VAPID_SUBJECT||"mailto:admin@lisaai-bay.vercel.app",VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY);
+      const subs=await listPushSubscriptions();let sent=0,failed=0;
+      const payload=JSON.stringify({title,body:message,url});
+      for(const s of subs){
+        try{await webpush.sendNotification({endpoint:s.endpoint,keys:{p256dh:s.p256dh,auth:s.auth}},payload);sent++;}
+        catch(e){failed++;if(e.statusCode===404||e.statusCode===410){try{const {deletePushSubscription}=await import("../supabase-feedback.js");await deletePushSubscription(s.endpoint)}catch{}}}
+      }
+      return res.status(200).json({ok:true,sent,failed,total:subs.length});
+    }catch(e){return res.status(502).json({error:"Notification send failed: "+e.message});}
+  }
   if (b0.action === "feedback-delete") {
     if (!hasSupabase()) return res.status(503).json({ error: "Supabase storage is not connected. Check Vercel environment variables." });
     const id = String(b0.id || "");
